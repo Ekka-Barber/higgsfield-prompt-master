@@ -1,52 +1,53 @@
----
+--- 
 name: higgsfield-prompt-master
-description: The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from 6,337 English-only prompts scraped from youmind.com
-version: 2.0.0
+description: The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from 7,613 English-only prompts scraped from youmind.com
+version: 2.1.0
 category: media
 ---
 
 # Higgsfield Master Prompt Skill
 ## The Ultimate GPT Image 2 Prompt Reference & Generation Tool
 
-> Built from 6,337 real **English-only** prompts scraped from youmind.com. Non-English prompts (2,240 Japanese/Korean/Arabic) were removed after analysis confirmed they contain zero unique techniques not present in the English corpus.
+> Built from **7,613** real **English-only** prompts scraped from youmind.com (6,337 original + 1,276 harvested Aug 2026). Non-English prompts (2,240 Japanese/Korean/Arabic) were removed after analysis confirmed they contain zero unique techniques not present in the English corpus.
 
 ---
 
-## 📊 Corpus Statistics (English-Only — verified June 2026)
+## 📊 Corpus Statistics (English-Only — verified August 2026)
 
 > **English-only policy:** Non-English prompts (2,240 Japanese/Korean/Arabic) were permanently removed after analysis confirmed they contained zero unique techniques, categories, or structures not present in the English corpus. The scraper (`scripts/rsc-prompt-extractor.py`) has an `is_non_english()` filter and will never save non-English prompts. See `references/non-english-analysis.md` for the comparison data.
 
 | Metric | Value |
 |--------|-------|
-| **Total Prompts** | 6,337 |
-| GPT Image 2 | 5,008 (79.0%) |
-| Nano Banana Pro | 1,329 (21.0%) |
+| **Total Prompts** | 7,613 (+1,276 from Aug 2026 harvest) |
+| GPT Image 2 | 6,095 (80.1%) |
+| Nano Banana Pro | 1,514 (19.9%) |
 | **Categories** | 26 |
-| **Avg Prompt Length** | ~1,573 chars |
-| **Median Length** | ~1,402 chars |
+| **Avg Prompt Length** | ~1,536 chars |
+| **ID Range** | 51 – 28,686 |
 
 ### Structure Distribution (from clean English-only corpus)
-- **Template (76.4%)** — 4,846 prompts with `{argument name="..." default="..."}` placeholders, avg ~1,458 chars
+- **Parameterized Templates (91% of new batch)** — `{argument name="..." default="..."}` syntax. See `references/parameterized-templates.md`
+- **Multi-Panel Campaign Grids (emerging)** — 3×2, 4×1, 5×1 panel campaigns. See `references/multi-panel-campaigns.md`
 - **JSON (10.0%)** — 636 prompts as structured JSON objects with type/style/layout, avg ~2,496 chars (longest)
 - **Other (9.6%)** — 606 hybrid/mixed formats, avg ~923 chars
 - **Flat Prose (3.9%)** — 249 natural language descriptions, avg ~1,572 chars
 
 **Length sweet spot:** 1,000–2,000 chars (39.5% of corpus). Below 500 = low quality.
 
-### Top Techniques (verified from full 8,596-prompt analytics)
+### Top Techniques (verified from full 7,613-prompt analytics)
 | Technique | Frequency | Description |
 |-----------|-----------|-------------|
-| Arguments/Templates | 85.4% | Parameterized placeholders for reusability |
+| Parameterized Templates | 91% (new) | `{argument}` syntax — dominant paradigm in latest prompts |
+| Spatial Anchoring | 78% (new) | Left/right/center/top/bottom positioning |
+| Resolution/Quality | 70% (new) | 4k, 8k, ultra-detail, photorealistic |
+| Negative Prompts | 55% (new) | What to avoid, exclusions |
+| Face/Character Lock | 44% (new) | Consistency across panels/generations |
+| Camera Specs | 42% (new) | Lens mm, aperture, depth of field |
 | Mood/Atmosphere | 70.1% | Cinematic, moody, vibrant, ethereal, gritty |
 | Material/Texture | 67.6% | Glass, metal, matte, glossy, fabric, organic |
 | Layout/Composition | 66.8% | Grid, alignment, center, balanced, rule of thirds |
 | Lighting | 54.3% | Golden hour, studio, soft, dramatic, volumetric |
-| Camera Specs | 47.3% | Lens mm, aperture f/, shot type, depth of field |
-| UI/UX terms | 27.0% | Interface, button, navbar, sidebar, dashboard |
-| Aspect Ratio | 25.3% | 16:9, 9:16, 1:1, 4:3, 21:9, 2:3, 3:2 |
 | Typography | 23.1% | Font styles, hierarchy, lettering, text effects |
-| Color Palette | 21.3% | Monochrome, complementary, gradient, brand colors |
-| Negative Prompts | 12.2% | What to avoid, anti-patterns |
 
 **The "Golden Pentagon"** — 50%+ of prompts combine all 5 core techniques: Arguments + Mood + Material/Texture + Layout + Lighting. This is the baseline quality standard.
 **Avg techniques per prompt:** 5.5 (max: 12).

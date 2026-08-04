@@ -1,10 +1,10 @@
 # 🎨 Higgsfield Prompt Master
 
-> The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from **6,337 real prompts** scraped from youmind.com, with photography, marketing, and art-direction intelligence layers.
+> The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from **7,613 real prompts** scraped from youmind.com, with photography, marketing, and art-direction intelligence layers.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Prompts](https://img.shields.io/badge/corpus-6%2C337%20prompts-green)](#corpus)
+[![Prompts](https://img.shields.io/badge/corpus-7%2C613%20prompts-green)](#corpus)
 [![Categories](https://img.shields.io/badge/categories-26-orange)](#categories)
 
 ## What this is
@@ -95,13 +95,13 @@ python demo.py
 
 ## 📚 Corpus
 
-The prompt corpus is the heart of this tool. It contains **6,337 prompts** scraped from youmind.com (a public GPT Image 2 prompt gallery) using a custom RSC flight-data extraction technique.
+The prompt corpus is the heart of this tool. It contains **7,613 prompts** scraped from youmind.com (a public GPT Image 2 prompt gallery) using a custom RSC flight-data extraction technique.
 
 ### What's in it
 
 | Attribute | Value |
 |---|---|
-| Total prompts | **6,337** |
+| Total prompts | **7,613** |
 | GPT Image 2 prompts | 5,008 |
 | Nano Banana prompts | 1,329 |
 | Categories | 26 |
@@ -116,7 +116,7 @@ The corpus is distributed as a SQLite database with FTS5 full-text search, via G
 
 | File | Size | Contents |
 |---|---|---|
-| `gpt-image2-prompts-full.db` | 56 MB | Full corpus with FTS5 index, enriched metadata |
+| `gpt-image2-prompts-full.db` | 56 MB | Full corpus (7,613 prompts, FTS5 index) with FTS5 index, enriched metadata |
 | `gpt-image2-prompts.db` | 912 KB | Compact subset (top 1,000 by quality score) |
 | `prompt-id-map.json` | 246 KB | 23,847 valid prompt IDs for re-scraping |
 
