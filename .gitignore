@@ -1,0 +1,33 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*~
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Large datasets — distributed via GitHub Releases, not tracked in git
+# See: https://github.com/USER/higgsfield-prompt-master/releases
+references/*.db
+references/prompt-id-map.json
+references/gpt-image2-prompts.json
+
+# Local secrets / env
+.env
+.env.local
+*.pem
+*.key
+
+# Build artifacts
+dist/
+build/
+*.log
