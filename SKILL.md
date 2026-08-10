@@ -1,7 +1,7 @@
 --- 
 name: higgsfield-prompt-master
 description: The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from 7,613 English-only prompts scraped from youmind.com
-version: 2.1.0
+version: 2.1.1
 category: media
 ---
 
