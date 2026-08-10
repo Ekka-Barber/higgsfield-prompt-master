@@ -47,6 +47,20 @@ pip install -r requirements.txt  # see dependencies below
 # See: https://github.com/Ekka-Barber/higgsfield-prompt-master/releases
 ```
 
+### Database path resolution
+
+The skill auto-locates `references/gpt-image2-prompts-full.db` in this order:
+
+1. **`HIGGSFIELD_DB` env var** — explicit override (any absolute path).
+2. **Auto-detect** — `<this_module's dir>/references/gpt-image2-prompts-full.db`. Works no matter where you cloned or installed the skill (`~/.agents/skills/`, `~/.hermes/skills/`, a venv, etc.).
+3. **Legacy fallbacks** — `~/.hermes/skills/higgsfield-prompt-master/...` then `~/.agents/skills/higgsfield-prompt-master/...`.
+
+To point at a non-standard corpus (e.g. for tests, a shared volume, or a different skill directory):
+
+```bash
+export HIGGSFIELD_DB=/path/to/custom-gpt-image2-prompts-full.db
+```
+
 ### Dependencies
 
 ```
