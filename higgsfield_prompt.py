@@ -5,13 +5,48 @@ Higgsfield Prompt Master — Core Module
 Search, analyze, and generate GPT Image 2 prompts from the 8,596-prompt corpus.
 """
 
-import sqlite3, json, re, random
+import sqlite3, json, re, random, os
 from pathlib import Path
 from dataclasses import dataclass
 from typing import Optional
 from collections import Counter
 
-DB_PATH = Path.home() / ".hermes" / "skills" / "higgsfield-prompt-master" / "references" / "gpt-image2-prompts-full.db"
+# ─── DATABASE PATH RESOLUTION ─────────────────────────────────────────────
+# The corpus database can live in different places depending on how this skill
+# was installed. Resolution order (first existing file wins):
+#   1. HIGGSFIELD_DB environment variable  — explicit override (any path)
+#   2. Auto-detect via this file's location — <skill_dir>/references/gpt-image2-prompts-full.db
+#      Works regardless of where the skill was dropped (~/.agents/, ~/.hermes/, venv, etc.)
+#   3. Legacy Hermes default — ~/.hermes/skills/higgsfield-prompt-master/references/...
+#   4. Legacy .agents default — ~/.agents/skills/higgsfield-prompt-master/references/...
+# Set HIGGSFIELD_DB to point at a non-standard location, e.g. for tests or CI.
+
+_DB_FILENAME = "gpt-image2-prompts-full.db"
+_SKILL_NAME = "higgsfield-prompt-master"
+
+def _resolve_db_path() -> Path:
+    # 1. Explicit env var override
+    env = os.environ.get("HIGGSFIELD_DB")
+    if env:
+        return Path(env).expanduser()
+
+    # 2. Auto-detect: this module sits at <skill_dir>/higgsfield_prompt.py
+    here = Path(__file__).resolve().parent
+    candidate = here / "references" / _DB_FILENAME
+    if candidate.exists():
+        return candidate
+
+    # 3-4. Legacy conventional locations
+    for base in (Path.home() / ".hermes", Path.home() / ".agents"):
+        legacy = base / "skills" / _SKILL_NAME / "references" / _DB_FILENAME
+        if legacy.exists():
+            return legacy
+
+    # Nothing found — return the auto-detect candidate anyway so the error
+    # message from sqlite points at the most likely intended location.
+    return candidate
+
+DB_PATH = _resolve_db_path()
 
 # ─── TECHNIQUE DETECTORS ───
 TECHNIQUE_DETECTORS = {
@@ -232,7 +267,7 @@ class HiggsfieldPromptMaster:
                 SELECT p.id, p.title, p.description, p.prompt_text, p.categories,
                        p.model, p.slug, p.structure_type, p.length_chars, p.technique_tags
                 FROM prompts_fts f
-                JOIN prompts p ON CAST(f.id AS INTEGER) = p.id
+                JOIN prompts p ON p.id = f.rowid
                 WHERE prompts_fts MATCH ? AND p.has_prompt = 1
                 ORDER BY rank
                 LIMIT ?
