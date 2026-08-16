@@ -5,7 +5,7 @@ RSC Prompt Extractor — Extracts prompts from Next.js App Router sites via curl
 Reusable pattern: extracts content from any Next.js RSC (React Server Components)
 flight data without a browser. 50x faster than CDP, Cloudflare-safe.
 
-The scraper at ~/.hermes/scripts/gpt-image2-rsc-scraper.py is the full production
+The scraper at ~/.agents/scripts/gpt-image2-rsc-scraper.py is the full production
 version with parallel workers, progress tracking, and the is_non_english() filter.
 This is the minimal pattern for reuse on other Next.js sites.
 

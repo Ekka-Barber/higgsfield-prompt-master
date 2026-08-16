@@ -7,7 +7,7 @@ Catches the 3 critical bugs that were fixed in June 2026:
   3. Photography specs injected into non-photo categories
 
 Usage:
-    cd ~/.hermes/skills/higgsfield-prompt-master
+    cd ~/.agents/skills/higgsfield-prompt-master
     python3 scripts/verify-generation-diversity.py
 """
 import sys

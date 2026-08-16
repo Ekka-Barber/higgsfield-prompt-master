@@ -312,3 +312,334 @@ def infer_mood(style: str, goal: str) -> str:
         return "innovative, sleek, forward-looking — precision engineering meets aspirational technology"
     else:
         return "polished, professional, purposeful — every detail deliberately crafted for impact"
+
+
+# Source: Ekka-Barber/higgsfield-prompt-master corpus analysis + freestylefly/awesome-gpt-image-2 (MIT)
+# ═══════════════════════════════════════════════════════════════════
+# LAYER 4: GPT_IMAGE_2 MODEL INTELLIGENCE
+# ═══════════════════════════════════════════════════════════════════
+# Model-specific guidance for prompts routed to gpt_image_2. Unlike the
+# photography/marketing layers (generic camera + platform specs), this layer
+# encodes what GPT Image 2 actually does well: JSON-fidelity layout parsing,
+# exact element counting, spatial anchoring by name, reliable text rendering,
+# and multi-zone composition. Derived from analysis of the 8,596-prompt
+# corpus (54% JSON-structured) + awesome-gpt-image-2 community patterns.
+
+GPT_IMAGE_2 = {
+    "strengths": [
+        "High-fidelity JSON layout parsing — keys like layout.centerpiece / left_section / right_section / footer render as placed",
+        "Exact element counting — 'exactly 4 cards' / 'exactly 8 rows' is honored, preventing arbitrary additions",
+        "Spatial anchoring by name — 'top-left header', 'bottom-right product card' positions elements deterministically",
+        "Reliable text rendering — UI labels, headlines, callouts, and short body copy render legibly without garbling",
+        "Multi-zone composition — complex layouts (dashboards, broadcast UI, recipe cards) hold together coherently",
+        "Exploded/labeled diagrams — centerpiece + callout_labels split left/right produce clean technical illustrations",
+        "Cross-reference image mapping — REFERENCE_0 as identity / REFERENCE_1 as layout disambiguates multi-image edits",
+        "Face lock edits — 'maintain exact facial structure from reference with 100% accuracy' preserves identity on edits",
+    ],
+    "weaknesses": [
+        "Long unstructured prose drifts — flat paragraphs lose element discipline on complex scenes (prefer JSON for layouts)",
+        "Without exact counts, model tends to add extra items (more cards, more rows) to fill space",
+        "Body text beyond ~12 words per block starts to garble or hallucinate characters",
+        "Fine print / disclaimers / legal-sized text renders poorly — keep text blocks short",
+        "Left unspecified, layout zones get reshuffled or merged on regeneration",
+        "Reference images without explicit REFERENCE_N numbering get applied ambiguously",
+        "Negative constraints buried in prose are ignored — 'negative prompt:' must be a labeled closing block",
+    ],
+    "preferred_structures": {
+        "json_object": {
+            "when": "PRIMARY structure — 54% of corpus. Use for UI mockups, exploded diagrams, infographics, posters, any multi-zone layout",
+            "keys": "type, subject, style, background, header, layout {centerpiece, left_section, right_section, footer}, callout_labels",
+            "rule": "Every named region in JSON becomes a placed region in the image. Be explicit — undefined regions get filled arbitrarily",
+        },
+        "flat_paragraph": {
+            "when": "46% of corpus. Single-subject, single-composition — portraits, cinematic shots, simple illustrations",
+            "pattern": "[SUBJECT] [STYLE] [TECHNICAL] [COMPOSITION] [BACKGROUND] [DETAILS] [CONSTRAINTS]",
+            "rule": "Reserve for ONE subject in ONE composition. Switch to JSON the moment a second zone appears",
+        },
+        "goal_canvas_sections": {
+            "when": "Niche — complex multi-zone designs (dashboards, broadcast UI, recipe cards) needing element counts per region",
+            "pattern": "Goal: <intent> | Canvas: <size> | named sections with element counts | closing 'Visual style:' paragraph as guard",
+            "rule": "Always close with a Visual style paragraph summarizing the full aesthetic — it prevents style drift across zones",
+        },
+    },
+    "text_rendering": {
+        "general_rule": "Keep text blocks SHORT — headlines <= 6 words, labels <= 3 words, body <= 12 words per block. Longer copy garbles",
+        "ui_labels": "Short UI strings render reliably: button labels, nav items, badges, tab names, status indicators, metric values",
+        "headlines": "Large bold headlines <= 6 words render crisply. Use explicit font-weight and size hints ('bold 48px sans-serif headline')",
+        "body_copy": "Limit to ~12 words per block. For longer copy, break into multiple discrete labeled blocks rather than one paragraph",
+        "numbers_metrics": "Numeric values (prices, stats, counts, percentages) render accurately — ideal for dashboards and infographics",
+        "multilingual": "Latin-script languages render well. Non-Latin scripts (Arabic, CJK) need explicit script + direction hints and shorter strings",
+        "typography_hints": "Specify family (sans/serif/mono), weight (bold/regular/light), and size tier explicitly. 'clean sans-serif typography' alone is too vague",
+    },
+    "quality_modifiers": {
+        "ui_screenshot": {
+            "structure": "JSON object with layout.centerpiece + named zones (top_header, left_sidebar, main_panel, bottom_bar)",
+            "counting": "State exact element counts: 'exactly 6 nav items', 'exactly 4 cards in main grid', 'exactly 3 tabs'",
+            "anchoring": "Anchor by name: 'top-left logo', 'bottom-right CTA button', 'center hero card'",
+            "text": "Short UI labels only — button text, nav labels, metric values. No long body copy in mockups",
+            "style_guard": "Close with Visual style paragraph: clean modern SaaS aesthetic, generous whitespace, consistent 8px spacing grid, subtle shadows",
+        },
+        "infographic": {
+            "structure": "JSON with header + layout (centerpiece chart/data viz + left_section legend + right_section callouts) or Goal/Canvas/Sections",
+            "counting": "'exactly 5 data points', 'exactly 4 stat blocks', 'exactly 3 icon rows' — prevents filler additions",
+            "anchoring": "'top-center title', 'center hero chart', 'bottom legend bar'",
+            "text": "Title + short stat labels + numeric values. Numbers render accurately — lean on metrics",
+            "style_guard": "Editorial infographic aesthetic, limited palette of 3 colors, clear typographic hierarchy, data-first composition",
+        },
+        "ecommerce_pdp": {
+            "structure": "JSON with centerpiece (product hero) + callout_labels (feature callouts split left/right) + footer (price/CTA zone)",
+            "counting": "'exactly 4 feature callouts', 'exactly 3 thumbnail variants', 'exactly 1 price block'",
+            "anchoring": "'center hero product', 'top-left brand mark', 'bottom-right price + CTA'",
+            "text": "Product name + short feature labels + price. Keep feature copy <= 6 words each",
+            "style_guard": "Clean e-commerce PDP aesthetic, pure white background, soft natural shadow under product, color-accurate material reproduction",
+        },
+        "exploded_diagram": {
+            "structure": "JSON with layout.centerpiece: 'vertically stacked exploded view' + callout_labels split into left_section/right_section arrays",
+            "counting": "'exactly 7 component layers', 'exactly 7 callout labels matching components'",
+            "anchoring": "Each component gets a numbered callout — 'component 1: ...', with leader lines implied",
+            "text": "Numbered component labels + short technical names. No descriptions in the callouts",
+            "style_guard": "Technical illustration aesthetic, isometric or orthographic projection, neutral background, precise line work",
+        },
+        "cinematic": {
+            "structure": "Flat paragraph with labeled sections: Shot Type / Subject + Face Lock / Setting / Action / Attire / Lighting & Color / Technical / negative prompt",
+            "counting": "Single subject, single composition — flat structure is correct here, do NOT use JSON",
+            "anchoring": "Subject placement via shot type ('centered medium shot', 'rule-of-thirds wide shot')",
+            "text": "Minimal diegetic text only. This is not a layout category",
+            "style_guard": "Camera spec depth: name the lens (e.g. 'Panavision anamorphic 70mm'), shallow DoF, cinematic color grade (teal-orange / deep contrast / HDR dynamic range)",
+        },
+        "portrait_edit": {
+            "structure": "Flat paragraph with explicit Face Lock clause + cross-reference mapping (REFERENCE_0 as identity)",
+            "counting": "One face, preserved exactly",
+            "anchoring": "Face lock: 'maintain exact facial structure from reference with 100% accuracy, preserve micro-details, no beautification'",
+            "text": "N/A",
+            "style_guard": "Subsurface scattering: 'soft natural skin with visible pores, smooth tonal transitions, subtle subsurface scattering'. Always pair with a negative prompt block",
+        },
+    },
+    "negative_prompt_library": {
+        "ui_screenshot": "negative prompt: overlapping elements, misaligned grid, broken layout, illegible labels, placeholder lorem ipsum text, inconsistent spacing, clipped text, distorted buttons",
+        "infographic": "negative prompt: misaligned data, illegible numbers, extra unlabeled elements, cluttered composition, inconsistent chart styling, garbled axis labels, color confusion",
+        "ecommerce_pdp": "negative prompt: distorted product, wrong proportions, color-inaccurate material, cluttered callouts, overlapping labels, illegible price, shadow artifacts",
+        "exploded_diagram": "negative prompt: misaligned components, mismatched callout numbering, distorted proportions, floating unanchored parts, garbled technical labels",
+        "cinematic": "negative prompt: distorted face, plastic skin, beauty filter effect, oversharpened texture, washed-out colors, banding, noisy shadows, anamorphic distortion errors",
+        "portrait_edit": "negative prompt: distorted face, plastic skin, beauty filter effect, altered facial structure, lost likeness, over-smoothed pores, uncanny valley, changed identity",
+        "general": "negative prompt: distorted elements, illegible text, garbled characters, overlapping zones, misaligned layout, extra unrequested elements, inconsistent styling",
+    },
+    "token_budget_guidance": {
+        "principle": "GPT Image 2 rewards detailed structured prompts but loses discipline past a threshold. Budget by structure, not by word count",
+        "json_layout": "Aim 200-450 tokens. Every named region earns its tokens — undefined space gets filled. More zones = more JSON keys, not more prose per key",
+        "flat_cinematic": "Aim 150-350 tokens. Camera + lighting + color + action + negative prompt. Beyond ~400 tokens the scene starts to drift and add unrequested elements",
+        "goal_canvas_sections": "Aim 300-600 tokens. Justified by explicit per-section element counts. The closing Visual style paragraph is ~50-80 tokens and is NOT optional trim",
+        "over_budget_warning": "If a prompt exceeds ~650 tokens, the model tends to: add extra unrequested elements, drift on style, garble longer text blocks. Split into focused regions instead",
+        "minimum_viable": "Below ~80 tokens the image is under-specified and the model improvises. Even simple shots need subject + style + composition + background minimum",
+        "negative_prompt_cost": "The 'negative prompt:' block is ~20-40 tokens and pays for itself — always include one for layout and portrait categories",
+    },
+}
+
+
+def get_gpt_image_2_intelligence(category: str, goal: str = "") -> dict:
+    """Get GPT Image 2 model-specific guidance for a category.
+
+    Returns the quality_modifiers + negative_prompt + text_rendering slice
+    relevant to the category/goal, plus the always-on structure/budget/strengths
+    context. Falls back to goal-keyword inference, then to the general slice.
+    """
+    cat_to_modifier = {
+        "App / Web Design": "ui_screenshot",
+        "Infographic / Edu Visual": "infographic",
+        "E-commerce Main Image": "ecommerce_pdp",
+        "Product Marketing": "ecommerce_pdp",
+        "Game Asset": "exploded_diagram",
+        "Cinematic / Film Still": "cinematic",
+        "Portrait / Selfie": "portrait_edit",
+        "Profile / Avatar": "portrait_edit",
+    }
+    modifier_key = cat_to_modifier.get(category)
+
+    if not modifier_key:
+        g = goal.lower()
+        if any(w in g for w in ["ui", "dashboard", "mockup", "interface", "app screen", "web page"]):
+            modifier_key = "ui_screenshot"
+        elif any(w in g for w in ["infographic", "chart", "data viz", "diagram", "stat"]):
+            modifier_key = "infographic"
+        elif any(w in g for w in ["product page", "pdp", "e-commerce", "ecommerce", "product detail", "shop"]):
+            modifier_key = "ecommerce_pdp"
+        elif any(w in g for w in ["exploded", "technical illustration", "breakdown", "components"]):
+            modifier_key = "exploded_diagram"
+        elif any(w in g for w in ["cinematic", "film still", "movie", "shot on", "anamorphic"]):
+            modifier_key = "cinematic"
+        elif any(w in g for w in ["portrait", "face", "headshot", "selfie", "avatar", "identity"]):
+            modifier_key = "portrait_edit"
+        else:
+            modifier_key = "ui_screenshot"  # GPT Image 2's dominant use case in the corpus
+
+    neg_key = modifier_key if modifier_key in GPT_IMAGE_2["negative_prompt_library"] else "general"
+
+    return {
+        "modifier": GPT_IMAGE_2["quality_modifiers"][modifier_key],
+        "negative_prompt": GPT_IMAGE_2["negative_prompt_library"][neg_key],
+        "text_rendering": GPT_IMAGE_2["text_rendering"],
+        "preferred_structures": GPT_IMAGE_2["preferred_structures"],
+        "token_budget_guidance": GPT_IMAGE_2["token_budget_guidance"],
+        "modifier_key": modifier_key,
+    }
+
+
+# Source: Google Cloud Nano Banana guide + kingbootoshi/nano-banana-2-skill (MIT) + ZeroLu/awesome-nanobanana-pro (MIT)
+# ═══════════════════════════════════════════════════════════════════
+# LAYER 5: NANO_BANANA MODEL INTELLIGENCE
+# ═══════════════════════════════════════════════════════════════════
+# Model-specific guidance for prompts routed to nano_banana_2. Nano Banana
+# (Gemini Flash Image / Gemini 3 Pro Image) is the photography & reference-
+# image model: 1,329 NB prompts in the corpus, heavily skewed to Social
+# Media (46%), Profile/Avatar (12%), camera-spec prose (62%), and lighting
+# directives (63%). Unlike GPT Image 2 (layout/JSON-first), NB rewards
+# camera-metadata vocabulary, face-lock clauses, and multi-image reference
+# composition (up to 14 inputs). Derived from the corpus model-comparison
+# (Section 12) + the photo-editing/avatar NB master prompts + community
+# skill specs. NOT derived from GPT_IMAGE_2 guidance — distinct strengths.
+
+NANO_BANANA = {
+    "models": {
+        # "flash" alias = Nano Banana 2 = Gemini 3.1 Flash Image
+        "nb2": {
+            "alias": "flash",
+            "engine": "Gemini 3.1 Flash Image",
+            "input_tokens": 131072,
+            "output_tokens": 32768,
+            "cost_per_1k": "lowest tier — fast, cheap, default for high-volume photo + edit tasks",
+            "strength": "speed and cost efficiency for photorealistic generation + reference-image edits; the workhorse for avatars, portraits, social, product restage",
+        },
+        # "pro" alias = Nano Banana Pro = Gemini 3 Pro Image
+        "nb_pro": {
+            "alias": "pro",
+            "engine": "Gemini 3 Pro Image",
+            "input_tokens": 65536,
+            "output_tokens": 32768,
+            "cost_per_1k": "premium tier — higher fidelity, reserved for hero/brand/photographic-detail work",
+            "strength": "maximum photoreal fidelity, finer skin/material texture, better long-range coherence; use when nb2 output undersells the subject",
+        },
+    },
+    "strengths": [
+        "Photorealistic camera output — 62% of NB corpus leads with camera body, lens, focal length, aperture (vs 45% for GPT Image 2)",
+        "Lighting directives render faithfully — 63% of NB corpus specifies lighting setup (Rembrandt, three-point, window, golden hour)",
+        "Reference-image editing & identity preservation — face-lock clauses hold likeness across restyle/background/wardrobe swaps",
+        "Up to 14 reference images per request — multi-image composition, style transfer, and subject-to-scene mapping",
+        "Natural skin texture with visible pores and subsurface scattering — no plastic-skin default",
+        "Shorter, prose-driven prompts succeed (avg 1,267 chars vs 1,634 for GPT Image 2) — camera vocabulary over layout scaffolding",
+        "JSON compartmentalization works (19.6% of NB corpus) for multi-element scenes that need zone discipline",
+        "Web-grounded generation — can ground entity/brand/place accuracy against live web context when factual fidelity matters",
+    ],
+    "weaknesses": [
+        "Layout/UI/diagram work is weaker than GPT Image 2 (Layout/Comp 47% vs 71%) — switch models for dashboards, infographics, exploded diagrams",
+        "Long body text and dense UI labels garble — keep text blocks short, prefer diegetic/minimal text",
+        "Without an explicit face-lock clause, identity drifts on edits (beautification, altered bone structure)",
+        "Without an explicit 'Do NOT change ...' closing clause, the model tends to over-edit (modernize vintage, alter features)",
+        "Aspect ratio is not reliably inferred from prose — supply ratio or a dimension-locking reference",
+        "Reference images beyond the supported MIME set or exceeding 14 inputs are ignored or merged ambiguously",
+        "Negative prompts buried in prose are ignored — put constraints in a labeled closing clause",
+    ],
+    "frameworks": {
+        # Framework 1 — pure text-to-image (no reference inputs)
+        "T2I": {
+            "name": "Text-to-Image (camera-spec prose)",
+            "formula": "[SUBJECT] + [CAMERA: body + lens + aperture] + [LIGHTING setup] + [SETTING/BACKGROUND] + [STYLE/MOOD] + [COMPOSITION + ratio] + [TECHNICAL: 8k, color grade] + [CONSTRAINTS clause]",
+            "when": "Fresh generation with no reference image — avatars, portraits, social, product, food. The dominant NB pattern (camera-spec prose)",
+            "rule": "Lead with subject, then camera metadata. NB rewards photographic vocabulary far more than layout scaffolding",
+        },
+        # Framework 2 — reference-image-driven (edit / restyle / compose)
+        "Multimodal": {
+            "name": "Multimodal reference composition",
+            "formula": "[FACE-LOCK clause on uploaded image] + [TRANSFORM: restyle/background/wardrobe] + [PRESERVE: identity, lighting direction, color temperature] + [OUTPUT camera/style] + [Do NOT ... clause]",
+            "when": "1-14 reference images attached — headshot makeover, background replacement, style transfer, restoration, multi-image composition",
+            "rule": "First reference = primary subject/style. State exactly what to preserve and what to change. Always close with a 'Do NOT alter identity' clause",
+        },
+        # Framework 3 — factually grounded generation
+        "Web-grounded": {
+            "name": "Web-grounded factual generation",
+            "formula": "[ENTITY/BRAND/PLACE subject] + [ground: live web context for accuracy] + [CAMERA + LIGHTING] + [COMPOSITION] + [ACCURACY clause: true-to-life details, real proportions, correct branding]",
+            "when": "Output must be factually faithful to a real entity — brand product, public figure, landmark, recognized IP",
+            "rule": "Reserve for when factual accuracy (correct logo, real architecture, accurate likeness) matters more than stylization. Pair with a face-lock or accuracy clause",
+        },
+    },
+    "reference_image_rules": {
+        "max_images": "Up to 14 reference images per request",
+        "mime_types": "png, jpeg, webp, heic, heif (unsupported types are ignored or merged ambiguously)",
+        "first_reference": "The FIRST reference image sets the primary subject + style — treat it as the identity/style anchor",
+        "last_reference": "The LAST reference image can lock output dimensions/aspect ratio (blank-image dimension trick: attach a blank canvas of the target ratio to force the output shape)",
+        "ordering": "Order matters: identity/style refs first, layout/composition refs middle, dimension-lock ref last",
+        "numbering": "When referencing specific inputs in prose, number them (uploaded image / first reference) — unnumbered refs get applied ambiguously",
+    },
+    "face_lock_phrasings": [
+        "Keep the facial features of the person in the uploaded image exactly consistent",
+        "Preserve original facial features and expressions exactly",
+        "Maintain identical lighting direction and color temperature on subject",
+        "preserving the person's facial identity and expression exactly",
+        "Keep the subject in the uploaded image exactly unchanged",
+        "Do NOT change facial identity / Do NOT alter the subject in any way",
+        "maintain exact facial structure from reference with 100% accuracy, preserve micro-details, no beautification",
+    ],
+    "studio_controls": {
+        "sizes": "512 / 1K / 2K / 4K on the long edge — pick by use case (512 for thumbnails/avatars, 1K for social, 2K for hero/web, 4K for print/brand)",
+        "aspect_ratios": "1:1 (avatar/square), 2:3 & 3:2 (portrait), 4:5 (IG feed), 9:16 (story/reel), 16:9 (landscape/YouTube), 3:4 & 2:1 (poster/banner)",
+        "ratio_specification": "75%+ of corpus has no explicit --ar flag — embed ratio in prose ('vertical 9:16', 'square 1:1 composition') or lock via a dimension reference",
+        "camera_vocabulary": "Body (Sony A7IV/R5, Hasselblad X2D, Phase One) + lens + focal length + aperture + ISO/shutter hints — this metadata drives NB output more than any other signal",
+        "lighting_vocabulary": "Three-point studio, Rembrandt, clamshell, window light, golden hour, ring light, beauty dish — explicit lighting setup renders faithfully",
+    },
+    "green_screen_workflow": {
+        "trick": "Chroma-key isolation: provide/generate the subject on a flat green (or solid chroma) background, then prompt NB to replace ONLY the green with [NEW BACKGROUND] while preserving subject edge detail, lighting, and shadows",
+        "steps": [
+            "1. Subject on green/solid chroma background (shot or generated)",
+            "2. Prompt: 'Replace only the green background with [NEW BACKGROUND]. Keep the subject exactly unchanged. Maintain identical lighting direction and color temperature. Seamless edge blending with zero haloing. Natural shadow casting on new background.'",
+            "3. Pair with a face-lock clause for portrait subjects",
+            "4. Close with: 'Do NOT alter the subject in any way.'",
+        ],
+        "blank_image_dimension_trick": "Attach a BLANK reference image of the target dimensions/aspect ratio as the last reference to lock the output shape — NB treats the last reference's canvas geometry as an output constraint, forcing the generation into that ratio without relying on a --ar flag",
+        "when": "Subject isolation + background swap, product restage onto a new set, composite work where edge fidelity matters",
+    },
+    "do_donts": {
+        "do": [
+            "Lead with camera body + lens + aperture for photographic work — it is the strongest signal NB responds to",
+            "Specify the lighting setup explicitly (Rembrandt, three-point, window, golden hour)",
+            "State an explicit aspect ratio or lock it via a dimension reference",
+            "Use a face-lock clause for any portrait/avatar/edit touching a real face",
+            "Close edit prompts with a 'Do NOT ...' clause naming what must not change",
+            "Number reference images when more than one is attached (uploaded image / first reference / last reference)",
+            "Keep text blocks short and diegetic — NB garbles dense UI copy",
+            "Use JSON compartmentalization only when a scene has multiple distinct zones that need discipline",
+        ],
+        "dont": [
+            "Don't route layout/UI/dashboard/infographic work to NB — use GPT Image 2 (Layout 71% vs 47%)",
+            "Don't exceed 14 reference images — extras are ignored or merged",
+            "Don't supply reference images outside png/jpeg/webp/heic/heif",
+            "Don't omit the face-lock clause on identity-preserving edits — likeness will drift",
+            "Don't bury constraints in prose — put them in a labeled closing clause",
+            "Don't over-specify layout scaffolding at the expense of camera vocabulary — NB is camera-first, not layout-first",
+            "Don't modernize vintage or alter historical character without an explicit instruction to preserve era",
+        ],
+    },
+}
+
+
+def get_nano_banana_intelligence(model: str = "nb2", category: str = "", goal: str = "") -> dict:
+    """Get Nano Banana model-specific guidance.
+
+    model: 'nb2' (flash / Gemini 3.1 Flash Image) or 'nb_pro' (pro / Gemini 3 Pro Image).
+    Returns the selected model spec plus the always-on NB context: strengths,
+    weaknesses, frameworks, reference-image rules, face-lock phrasings, studio
+    controls, green-screen workflow, and do/don'ts. The category/goal are
+    accepted for parity with get_gpt_image_2_intelligence but NB guidance is
+    model-first (not category-first) since NB's routing is photography/edit heavy.
+    """
+    model_key = model if model in NANO_BANANA["models"] else "nb2"
+    return {
+        "model": NANO_BANANA["models"][model_key],
+        "model_key": model_key,
+        "strengths": NANO_BANANA["strengths"],
+        "weaknesses": NANO_BANANA["weaknesses"],
+        "frameworks": NANO_BANANA["frameworks"],
+        "reference_image_rules": NANO_BANANA["reference_image_rules"],
+        "face_lock_phrasings": NANO_BANANA["face_lock_phrasings"],
+        "studio_controls": NANO_BANANA["studio_controls"],
+        "green_screen_workflow": NANO_BANANA["green_screen_workflow"],
+        "do_donts": NANO_BANANA["do_donts"],
+    }
