@@ -7,6 +7,16 @@
 > source in `research/*.md`. Claims WITHOUT evidence are marked [gap] — encode nothing
 > from folklore without a row here.
 
+## 0. ENGINE SCOPE (owner directive, 2026-08-17)
+
+**The engine routes to exactly TWO models — nothing else:**
+1. **GPT Image 2** — `gpt-image-2` / snapshot `gpt-image-2-2026-04-21` (OpenAI)
+2. **Nano Banana Pro** — `gemini-3-pro-image` (Google; NOT the preview id, NOT 2.5/Lite/3.1-Flash)
+
+All other models in `competing-models-landscape.md` are **reference material only** —
+they inform universal prompting principles, but no adapters, routers, or emissions
+target them. `_recommend_model()` returns exactly: `gpt_image_2` | `nano_banana_pro`.
+
 ---
 
 ## 1. Architecture decision (supersedes "JSON vs prose" entirely)
@@ -15,16 +25,15 @@
 
 Evidence: no JSON-vs-prose efficacy study exists anywhere (academic gap); the efficacious
 ingredient is *semantic structure* — per-entity attribute slots, zones, counts (LMD ≈2×,
-LayoutGPT +20–40%, Make It Count); JSON is *required* only on Ideogram-4-open-weights,
-*sanctioned* on FLUX.2, and *optional-irrelevant* on our two actual targets:
+LayoutGPT +20–40%, Make It Count). JSON is *required* only on Ideogram-4-open-weights,
+*sanctioned* on FLUX.2 — **both out of scope**. Our two targets are both prose-renderers:
 
 - **gpt-image-2**: paragraph default, sections optional, JSON never recommended
-- **Gemini image (Nano Banana)**: narrative prose only; "keyword lists won't cut it"
+- **Nano Banana Pro** (`gemini-3-pro-image`): narrative prose only; "keyword lists won't cut it"
 
 So: retrieve corpus JSON templates for their **structure** (zones/counts/labels), fill
 slots from goal + intelligence layers, **render to cohesive prose** (with optional
-labeled sections when complexity warrants). JSON rendering becomes a future adapter
-(FLUX.2/Ideogram), not the default.
+labeled sections when complexity warrants). Two renderers total — one per target model.
 
 IR fields: `subject, action, environment, style/medium, lighting, color (named+hex),
 mood, composition/camera (photoreal only), text_elements[{literal, placement,
@@ -83,49 +92,63 @@ output_intent (photo|art), quality_tier`.
 - **camera**: generic camera/lens/lighting mention endorsed; exact lens incantations
   NOT endorsed ("interpreted loosely" per model page — high-level look only).
 
-## 4. NANO_BANANA dict — corrected spec
+## 4. NANO_BANANA_PRO dict — corrected spec (`gemini-3-pro-image` ONLY)
 
-- **names** (umbrella): 2 Lite `gemini-3.1-flash-lite-image` · NB2 `gemini-3.1-flash-image`
-  · NB Pro `gemini-3-pro-image` (preview id DEAD) · legacy `gemini-2.5-flash-image`.
-  Imagen shut down 2026-08-17.
+> The engine targets **Pro specifically**. Family context (why): "Nano Banana" is an
+> umbrella — 2 Lite `gemini-3.1-flash-lite-image`, NB2 `gemini-3.1-flash-image`,
+> **Pro `gemini-3-pro-image`** (GA 2026-05-28; `-preview` id DEAD 2026-06-25), legacy
+> `gemini-2.5-flash-image`. Imagen shut down 2026-08-17. Dict claims must be Pro-true,
+> not family-true.
+
+- **model name**: `gemini-3-pro-image`. Never emit `-preview`, never 2.5/Lite ids.
 - **prompting**: narrative scene description, hyper-specific, context+intent first;
   formulas: `[Subject]+[Action]+[Location]+[Composition]+[Style]` and
-  `[References]+[Relationship]+[New scenario]`. Camera language officially encouraged.
-- **references** (per-tier table): Lite 14 objects/no char-style · 3.1 Flash 10 obj +
-  4 char · 3 Pro 6 obj + 5 char + 3 style · legacy best ≤3. Replace flat "14".
+  `[References]+[Relationship]+[New scenario]`. Camera language officially encouraged
+  (contrast with GPT's "interpreted loosely" — this is a genuine per-model difference
+  the two renderers must encode).
+- **references (Pro row)**: **6 object images + 5 character images + 3 style refs**;
+  "supports 5 images with high fidelity, and up to 14 images in total" (legacy-doc
+  phrasing — treat 6+5+3 as the working limits). Replace flat "14 references".
 - **face_lock** (replace "100% accuracy"): "Ensure the person's face and features
-  remain completely unchanged." Capped guarantee: up to 5 characters; model card admits
-  small-face/spelling struggles.
+  remain completely unchanged." Official cap: consistency/resemblance of **up to five
+  characters**; model card admits small-face/spelling/fine-detail struggles.
 - **green_screen**: DELETE (not in any official source). Real workflows: semantic-mask
   edits ("change only the blue sofa… keep everything else unchanged"), conversational
   removal, step-by-step construction ("First… Then… Finally…").
 - **semantic_negatives**: restate positively ("an empty, deserted street with no signs
   of traffic").
 - **text**: per-line font specification works ("'GLOW' in Brush Script; '10% OFF' in
-  Impact"); docs advise text-first-then-image for complex text; Arabic = ar-EG listed
-  among best languages.
-- **ratios**: 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9 (3.1 Flash adds
-  1:4, 4:1, 1:8, 8:1); 1K/2K/4K.
+  Impact"); docs advise text-first-then-image for complex text; **interleaved
+  text+image is Pro-only** (a Pro strength to exploit). Arabic = ar-EG listed among
+  best languages.
+- **ratios (Pro)**: 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9, 21:9 — the 1:4/4:1/
+  1:8/8:1 extremes are **3.1 Flash only, NOT Pro**. Resolutions 1K/2K/4K.
+- **Pro-only strengths to route toward**: premium world knowledge, localization
+  (translate-text-in-image workflows), brand consistency, interleaved text+image.
+- **NOT Pro** (do not emit): thinking_level (3.1 Flash only), video-to-image and
+  Image-Search grounding (3.1 Flash only), 512px output (3.1 Flash only).
+- **cost**: output 1120 tok (1K/2K) ≈ $0.134, 2000 tok (4K) ≈ $0.24; input images
+  fixed at 560 tokens each; multi-turn editing via `previous_interaction_id`.
 - **limits**: won't always honor exact output counts; blending can artifact; verify
   factual content.
 
-## 5. Exclusion/negative adapter matrix
+## 5. Exclusion/negative adapter (two active rows — scope is locked)
 
 | Target | Channel |
 |---|---|
-| gpt-image-2 | positive-first + inline "without any clouds" clause |
-| Gemini image | semantic positive rewrite ("empty deserted street") |
-| Midjourney (future) | `--no item` param |
-| SD3.5 / Qwen (future) | dedicated negative field (Qwen: `" "` when empty) |
-| FLUX.2 / Ideogram / Recraft (future) | invert to positive phrasing |
+| **gpt-image-2** | positive-first + inline "without any clouds" clause |
+| **Nano Banana Pro** | semantic positive rewrite ("empty deserted street with no signs of traffic") |
+| Midjourney / SD / Qwen / FLUX.2 / Ideogram / Recraft | ~~out of scope~~ — reference only (`competing-models-landscape.md`) |
 
-## 6. Higgsfield routing corrections
+## 6. Router corrections
 
-- `_recommend_model()` returning "nano_banana_2"/"gpt_image_2" as "Higgsfield models"
-  is wrong framing: Higgsfield is an aggregator (50+ models, own `Soul`). Correct
-  design: return model family + the prompt spec above; note Higgsfield is
-  identity/camera-first and prompt-LIGHT (Soul IDs, Popcorn storyboards, Cinema Studio
-  camera vocabulary) — short cinematography-flavored prompts when routing through it.
+`_recommend_model()` returns exactly two values with correct product framing:
+`gpt_image_2` (gpt-image-2, snapshot 2026-04-21) | `nano_banana_pro` (gemini-3-pro-image).
+Not "Higgsfield models" — Higgsfield is the aggregator the requests go through; it also
+offers its own prompt-light `Soul` flow (Soul IDs, Popcorn, Cinema Studio camera
+vocabulary), but model routing stays two-model. Routing signals: layout/UI/text-dense →
+lean gpt-image-2 (quotes/CAPS text levers, quality=high); reference-heavy compositing,
+up-to-5-character consistency, localization, brand work → lean Nano Banana Pro.
 
 ## 7. Engine features adopted from production research
 
@@ -145,7 +168,7 @@ per-channel AR expansion · QA checklist hooks · A/B variants with prompt-level
 | ≤6-word headlines / ≤12-word body | invented | quotes/CAPS/letter-spelling/quality=high |
 | Subject→…→background fixed order | unsupported | front-load subject; 7-facet coverage |
 | Lens-name incantations | overrated | generic camera language; high-level look |
-| 14 reference images (flat) | under-specified | per-tier table |
+| 14 reference images (flat) | under-specified | **Pro: 6 objects + 5 characters + 3 style refs** |
 | Face lock "100% accuracy" | refuted | "completely unchanged" phrasing |
 | Green-screen workflow | folklore | semantic masking / conversational edit |
 | "exactly 4 cards" always honored | overstated | small-N reliable; layout cues for larger |

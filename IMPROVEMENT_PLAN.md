@@ -11,6 +11,10 @@ now UNBLOCKS P1-0 and redefines P1-1 (IR + per-model rendering, not "wire JSON i
 
 **Status legend:** ✅ done · 🔥 urgent · ⏸ blocked (waiting on research)
 
+**ENGINE SCOPE (owner directive):** exactly two models — **GPT Image 2** (`gpt-image-2`)
+and **Nano Banana Pro** (`gemini-3-pro-image`). All other models are research reference
+only; no adapters/routers/emissions target them.
+
 ---
 
 ## Executive summary
@@ -95,13 +99,17 @@ installs share this tree. Commit = release. Old hub preserved at
 The `GPT_IMAGE_2` dict contradicts OpenAI's official docs on 6 points; the
 `NANO_BANANA` dict carries at least 3 refuted claims (flat "14 refs", "100% face-lock
 accuracy", green-screen workflow). **`research/SOURCE_TRUTH.md` now contains the
-complete corrected spec for both dicts** — claim ledger, per-tier reference tables,
-exclusion-adapter matrix, corrected phrasings — reconciled from all 7 research streams.
-**Fix:** rebuild both dicts from SOURCE_TRUTH §3 (GPT) and §4 (Nano Banana); every claim
-gets source URL + date + confidence (Phase-1 of the P3-3 versioned-profiles design).
-Delete: green-screen workflow, word limits, REFERENCE_N syntax, negative-prompt block,
-booster vocabulary. Correct: model names (`gpt-image-2`, `gemini-3-pro-image` family),
-face-lock phrasing, per-tier reference limits.
+complete corrected spec for both dicts** — claim ledger, corrected phrasings, exclusion
+channels — reconciled from all 7 research streams. The Google side targets **Nano
+Banana Pro specifically** (`gemini-3-pro-image`: 6 objects + 5 characters + 3 style
+refs; up-to-5-character consistency; Pro-only interleaved text+image; 10 standard
+ratios — the 1:4/8:1 extremes belong to 3.1 Flash, not Pro).
+**Fix:** rebuild both dicts from SOURCE_TRUTH §3 (GPT) and §4 (Nano Banana Pro); every
+claim gets source URL + date + confidence (Phase-1 of the P3-3 versioned-profiles
+design). Delete: green-screen workflow, word limits, REFERENCE_N syntax,
+negative-prompt block, booster vocabulary. Correct: model names, face-lock phrasing,
+Pro reference limits. `_recommend_model()` returns exactly `gpt_image_2` |
+`nano_banana_pro`.
 
 ### P1-1 ⏳ Wire corrected layers + REAL slot-filling into generation
 **Redesigned by the research sweep** (SOURCE_TRUTH §1): the engine keeps a structured
@@ -111,8 +119,9 @@ composition/text_elements/negative_concepts/ratio/references/output_intent) and
 **prose-renderers** — so retrieved corpus JSON templates are consumed for their
 *structure* (zones, counts, labels — the best-evidenced technique: LMD ≈2×, LayoutGPT
 +20–40%), slots are filled from goal + corrected layers, and output renders as cohesive
-prose (labeled sections optional). JSON emission becomes a future adapter, not the
-default. Two parts — budget honestly:
+prose (labeled sections optional). **Two renderers total — one per target model**
+(scope locked: gpt-image-2 + Nano Banana Pro; JSON emission and other-model adapters
+are out of scope). Two parts — budget honestly:
 1. *(~40 lines)* Wire the **corrected** (post-P1-0) layers into `generate_prompt()` keyed
    off `_recommend_model()`; check goal platform keywords *before* the category map
    (fixes LinkedIn goal → Instagram safe-zones).
@@ -211,14 +220,11 @@ score). For any LLM/VLM judging: **pairwise, never pointwise** (Spearman 0.86 vs
 6. **Non-English bridge:** detect non-Latin goals → translate-then-retrieve with explicit
    warning (currently `مشرقي` returns 0 results silently). Evidence-backed default
    (arXiv 2208.09333, LMD); Arabic T2I specifically is an academic gap — measure our own.
-7. **Model-adapter architecture (from competing-models research):** the P1-1 IR plus a
-   renderer per model family — prose (default), JSON (FLUX.2 official schema / Ideogram
-   caption format, strict key order), parameter (Midjourney `--ar --no --sref --raw`);
-   per-adapter exclusion transform (SOURCE_TRUTH §5); text-critical routing (dense/bilingual
-   text → Ideogram/Qwen/Seedream/FLUX.2, never MJ); disable model-side rewriters
-   (Magic Prompt, prompt_upsampling) when emitting fully-specified prompts. Turns the
-   2-model skill into an any-model engine; Higgsfield adapter emits short
-   cinematography-flavored prompts + Soul ID linkage.
+7. ~~Model-adapter architecture~~ **DESCOPED (owner directive):** the engine targets
+   ONLY gpt-image-2 + Nano Banana Pro. `research/competing-models-landscape.md` and
+   SOURCE_TRUTH §5 remain as reference material should the scope ever expand — the IR
+   from P1-1 makes that a renderer addition, not a rewrite — but no work is planned on
+   Midjourney/FLUX/Ideogram/Qwen/SD adapters.
 
 ---
 
@@ -250,4 +256,4 @@ All research is done. **P1-0 and P1-1 are unblocked** — execute in the order b
 5. **P1-1** IR + corrected layers + real slot-filling + prose renderer — the commit that
    makes the product real
 6. **P1-4** scorer + **P2-9** tests/regression gate · **P1-5** docs truth-pass
-7. P2 remainder, then P3 (build/refresh pipeline first; adapters as the growth path)
+7. P2 remainder, then P3 (build/refresh pipeline first)
