@@ -31,3 +31,6 @@ references/gpt-image2-prompts.json
 dist/
 build/
 *.log
+
+# ralph-tui runtime output (prd/config ARE tracked)
+.ralph-output/
