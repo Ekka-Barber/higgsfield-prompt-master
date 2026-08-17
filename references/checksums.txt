@@ -1,0 +1,7 @@
+# SHA-256 checksums for pinned GitHub Release assets.
+# Format: <sha256>  <asset>  <tag>   (whitespace-separated; # lines are comments)
+# scripts/fetch-db.py verifies downloads against this file and refuses mismatches.
+# Curator: after publishing a release, update the lines for its tag
+# (hashes come from `python scripts/build-db.py` / `--export` output).
+1944c85b9f58c0e2b0eeb9d0436a3836757ddb24a505b8a6b2d442300728219c  gpt-image2-prompts-full.db  v2.2.0
+fc71d5ec9d9439869ead0efb3ed310f746b5ecdecc158a3da2ec26fcda025705  gpt-image2-prompts.jsonl  v2.2.0

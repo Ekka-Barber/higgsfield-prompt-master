@@ -1,6 +1,6 @@
-# 🎨 Higgsfield Prompt Master
+# Higgsfield Prompt Master
 
-> The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from **7,613 real prompts** scraped from youmind.com, with photography, marketing, and art-direction intelligence layers.
+> GPT Image 2 / Nano Banana Pro prompt reference & generation engine — built from **7,613 real prompts** scraped from youmind.com.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -9,97 +9,91 @@
 
 ## What this is
 
-A production-grade GPT Image 2 prompt engineering system that combines:
+A stdlib-only Python engine that retrieves, scores, and generates image-generation prompts:
 
-1. **A curated corpus** of 6,337 real, scraped, and categorized GPT Image 2 prompts (English-only, cleaned, enriched)
-2. **A retrieval system** (FTS5-backed) to find similar prompts by intent, structure, and technique
-3. **An intelligent generator** that adapts corpus patterns to your specific use case
-4. **Photography / marketing / art-direction intelligence layers** that inject expert specs into prompts
-5. **Quality scoring** to grade generated prompts before they're sent to the model
-6. **Model auto-selection** (GPT Image 2 vs. Nano Banana 2) based on prompt category
+1. **Corpus** — 7,613 scraped prompts in a SQLite DB with an FTS5 full-text index. 6,337 curated rows are searchable by default; 1,276 harvested rows become searchable after running the migration scripts (see [Maintenance](#maintenance)).
+2. **Retrieval** — FTS5 search with quote-safe sanitization and 3-strategy progressive fallback, plus filtered `search()`.
+3. **Generation** — retrieves goal-relevant exemplars, extracts a prompt IR (`ir.py`), fills slots from your goal + intelligence layers, and renders model-native prose (`renderers.py`).
+4. **Quality scoring** — PQS 6-factor weighted score (`pqs.py`), graded as percentiles against the corpus distribution (`pqs_calibration.json`).
+5. **Model routing** — exactly two targets: `gpt-image-2` and `gemini-3-pro-image` (Nano Banana Pro).
 
-This is a **Hermes Agent skill** — designed to run inside the [Higgsfield MCP workflow](https://github.com/Ekka-Barber/higgsfield-mcp) for native Telegram image delivery.
+Works standalone or as an agent skill (copy the repo anywhere; nothing is installed).
 
-## ✨ Key features
+## Requirements
 
-- **RAG-based generation** — retrieves real corpus prompts via FTS5 search and adapts them, rather than guessing from scratch
-- **English-only corpus** — non-English prompts were analyzed and removed (zero unique value; see [`references/non-english-analysis.md`](references/non-english-analysis.md))
-- **26 categories** — from `abstract` and `architecture` to `portraits`, `posters`, `infographics`, and `branded-content`
-- **14 techniques tagged** — "Exact Counting", "Spatial Anchoring", "Face Lock", "Style References", and more
-- **3 prompt structures** identified and reproduced — Flat, Goal+Canvas+Sections, and JSON
-- **Quality scoring** — grades prompts A+ to F on 8 dimensions before generation
-- **Multi-model routing** — auto-selects the best Higgsfield model for the prompt type
+- **Python 3.10+** — standard library only, no pip dependencies, no `requirements.txt`.
+- The corpus DB at `references/gpt-image2-prompts-full.db` (~55 MB, gitignored). It ships with the working tree you obtained; if missing, point `HIGGSFIELD_DB` at a copy or run `python scripts/fetch-db.py` (downloads the pinned GitHub Release asset and SHA-256-verifies it against the committed `references/checksums.txt`).
 
-## 📦 Installation
-
-### As a Hermes Agent skill
-
-Copy this directory into `~/.hermes/skills/higgsfield-prompt-master/` and Hermes will auto-discover it.
-
-### Standalone (without Hermes)
-
-```bash
-git clone https://github.com/Ekka-Barber/higgsfield-prompt-master.git
-cd higgsfield-prompt-master
-pip install -r requirements.txt  # see dependencies below
-
-# Download the prompt corpus (57 MB, distributed via Releases)
-# See: https://github.com/Ekka-Barber/higgsfield-prompt-master/releases
-```
+> Note: this repo is **not** an importable Python package (the directory name is hyphenated). `import higgsfield_prompt` resolves to the module `higgsfield_prompt.py` once the repo root is on `sys.path`. There is deliberately no `__init__.py`; the version lives only in `SKILL.md` frontmatter.
 
 ### Database path resolution
 
-The skill auto-locates `references/gpt-image2-prompts-full.db` in this order:
+`HiggsfieldPromptMaster()` locates the corpus in this order (first existing file wins; a missing DB raises `FileNotFoundError` listing every candidate — it never silently creates one):
 
-1. **`HIGGSFIELD_DB` env var** — explicit override (any absolute path).
-2. **Auto-detect** — `<this_module's dir>/references/gpt-image2-prompts-full.db`. Works no matter where you cloned or installed the skill (`~/.agents/skills/`, `~/.hermes/skills/`, a venv, etc.).
-3. **Legacy fallbacks** — `~/.hermes/skills/higgsfield-prompt-master/...` then `~/.agents/skills/higgsfield-prompt-master/...`.
+1. `HIGGSFIELD_DB` env var — explicit override (must exist; no fallback if it doesn't).
+2. `<repo root>/references/gpt-image2-prompts-full.db` — relative to `higgsfield_prompt.py`.
+3. Legacy skill locations: `~/.hermes/skills/higgsfield-prompt-master/references/…`, then `~/.agents/skills/higgsfield-prompt-master/references/…`.
 
-To point at a non-standard corpus (e.g. for tests, a shared volume, or a different skill directory):
+Reads open the DB via a read-only URI (`file:…?mode=ro`); only `enrich_all()` reopens read-write.
 
-```bash
-export HIGGSFIELD_DB=/path/to/custom-gpt-image2-prompts-full.db
-```
+## Usage
 
-### Dependencies
-
-```
-torch>=2.0
-transformers>=4.40
-sentence-transformers>=2.5
-sqlite-utils
-```
-
-## 🚀 Usage
-
-### Generate a prompt
-
-```python
-from higgsfield_prompt import HiggsfieldPromptGenerator
-
-gen = HiggsfieldPromptGenerator()
-
-# Generate a product photography prompt
-prompt, model = gen.generate(
-    intent="product_shot",
-    subject="luxury perfume bottle",
-    style="editorial fashion magazine",
-    quality="high"
-)
-print(f"Model: {model}")
-print(f"Prompt: {prompt}")
-```
+Run everything from the repo root.
 
 ### Search the corpus
 
 ```python
-from higgsfield_prompt import HiggsfieldPromptGenerator
+from higgsfield_prompt import HiggsfieldPromptMaster
 
-gen = HiggsfieldPromptGenerator()
-results = gen.search("minimalist product photography with hands", limit=5)
-for r in results:
-    print(f"[{r['quality_score']}] {r['prompt'][:100]}...")
+hpm = HiggsfieldPromptMaster()
+
+# Filtered search (query terms OR'd across title/description/prompt_text)
+for p in hpm.search("minimalist product photography", limit=5):
+    print(f"[{p.id}] {p.title} ({p.structure_type}, {p.length_chars} chars)")
+
+# Full-text search (FTS5, quote-safe, progressive fallback)
+hits = hpm.fts_search("dashboard glassmorphism", limit=10)
+
+# Filters: category / model / structure / techniques
+ui = hpm.search(category="App / Web Design", structure="JSON", limit=5)
+cam = hpm.search(techniques=["Camera Specs", "Lighting details"], limit=5)
 ```
+
+`search()` / `fts_search()` return `Prompt` dataclass objects (`id`, `title`, `description`, `prompt_text`, `categories`, `model`, `slug`, `structure_type`, `length_chars`, `techniques`).
+
+### Generate a prompt
+
+```python
+from higgsfield_prompt import HiggsfieldPromptMaster
+
+hpm = HiggsfieldPromptMaster()
+result = hpm.generate_prompt(
+    goal="Premium skincare serum product shot",
+    category="Product Marketing",   # drives photo + marketing intelligence
+    structure="Template",           # biases exemplar selection only
+    style="Clean, clinical, premium",
+    aspect_ratio="4:5",             # auto-detected from marketing layer if omitted
+)
+
+result["prompt"]               # the rendered prompt text
+result["model_recommendation"] # {"id": "gpt_image_2"|"nano_banana_pro", "model_id": ..., "display_name": ..., "signal": ...}
+result["quality_score"]        # PQS dict: {"total": float, "grade": "A+".."F", ...}
+result["source_prompt_ids"]    # real corpus IDs used as retrieval evidence
+result["aspect_ratio"], result["length"], result["intelligence"]
+```
+
+Pipeline: goal-relevant FTS retrieval → IR extraction + donor merge (`ir.py`) → slot fill (goal lead, style, mood, aspect ratio, photo/marketing layers; camera fragments scrubbed for non-photo categories) → model-native rendering (`render_gpt_image_2` / `render_nano_banana_pro`) → PQS scoring.
+
+### Analytics
+
+```python
+hpm.stats()                                  # corpus-wide counts
+hpm.category_guide("App / Web Design")       # structure/technique/length deep-dive
+hpm.compare_models("GPT Image 2", "Nano Banana")
+hpm.random_prompt(category="Comic / Storyboard")
+```
+
+Module-level convenience wrappers (`search_prompts`, `get_templates`, `analyze_patterns`, `generate_prompt`, `random_prompt`) and a CLI (`python higgsfield_prompt.py stats|search|guide|generate|random|enrich`) also exist.
 
 ### Run the demo
 
@@ -107,92 +101,89 @@ for r in results:
 python demo.py
 ```
 
-## 📚 Corpus
+## Corpus
 
-The prompt corpus is the heart of this tool. It contains **7,613 prompts** scraped from youmind.com (a public GPT Image 2 prompt gallery) using a custom RSC flight-data extraction technique.
-
-### What's in it
-
-| Attribute | Value |
+| Metric | Value |
 |---|---|
-| Total prompts | **7,613** |
-| GPT Image 2 prompts | 5,008 |
-| Nano Banana prompts | 1,329 |
+| Total rows | **7,613** |
+| Searchable (curated) | 6,337 — the other 1,276 harvested rows unlock via `scripts/migrate_status.py` + `scripts/rebuild_corpus.py` |
+| GPT Image 2 | 5,008 (79.0% of searchable) |
+| Nano Banana | 1,329 (21.0%) |
 | Categories | 26 |
-| Techniques tagged | 14 |
-| Prompt structures identified | 3 (Flat, Goal+Canvas+Sections, JSON) |
-| Avg. prompt length (sweet spot) | 1,000–2,000 chars |
-| Template-heavy prompts | 72.4% of corpus |
+| Structures | Template 4,846 · JSON 636 · Other 606 · Flat prose 249 |
+| Avg prompt length | ~1,457 chars |
+| ID range | 13,440 – 28,686 |
 
-### Download the corpus
+Counts from `hpm.stats()` on the shipped DB (legacy schema, searchable = `has_prompt = 1`). English-only: 2,240 non-English prompts were removed after analysis showed zero unique value ([`references/non-english-analysis.md`](references/non-english-analysis.md)).
 
-The corpus is distributed as a SQLite database with FTS5 full-text search, via GitHub Releases (too large for the repo itself):
+## Categories
 
-| File | Size | Contents |
-|---|---|---|
-| `gpt-image2-prompts-full.db` | 56 MB | Full corpus (7,613 prompts, FTS5 index) with FTS5 index, enriched metadata |
-| `gpt-image2-prompts.db` | 912 KB | Compact subset (top 1,000 by quality score) |
-| `prompt-id-map.json` | 246 KB | 23,847 valid prompt IDs for re-scraping |
+Top categories by searchable prompt count: Social Media Post (1,978) · Product Marketing (1,230) · Poster / Flyer (799) · Profile / Avatar (658) · Comic / Storyboard (570) · Game Asset (450) · Infographic / Edu Visual (318) · App / Web Design (133) — plus 18 more (full list in [`references/gpt-image2-categories.json`](references/gpt-image2-categories.json)). Category deep-dive guides live in [`references/`](references/).
 
-➡️ **[Download from Releases](../../releases/latest)**
-
-### Why English-only?
-
-We analyzed all 2,240 non-English prompts in the original corpus and found they contributed **zero unique techniques, categories, or structures** beyond what the English prompts already covered. The full analysis is in [`references/non-english-analysis.md`](references/non-english-analysis.md). Short version: GPT Image 2 doesn't understand non-English prompts any better than English, and English prompts produce more predictable results.
-
-## 🗂️ Categories
-
-The corpus covers 26 categories, each with its own reference guide:
-
-`abstract` · `architecture` · `avatars` · `branded-content` · `branded-social-invitation` · `cinematic` · `ecommerce` · `fashion` · `food` · `game-assets` · `infographics` · `interior-design` · `photo-editing` · `portraits` · `posters` · `social-media`
-
-Each category has a dedicated reference file in [`references/`](references/) with expert guidance, camera specs, lighting setups, and example prompts.
-
-## 🧠 Architecture
+## Architecture
 
 ```
-higgsfield_prompt.py     # Core: corpus loading, FTS5 search, generation, scoring
-intelligence.py          # Expert layers: photography, marketing, art direction
-demo.py                  # Usage examples
-references/              # Category guides + scraping techniques + corpus analysis
-scripts/                 # RSC prompt extractor + diversity verifier
+higgsfield_prompt.py    # engine: read-only DB open, search/FTS, generation pipeline, model routing, CLI
+ir.py                   # prompt intermediate representation + extract_ir (JSON/template/prose parsers)
+renderers.py            # render_gpt_image_2 / render_nano_banana_pro prose renderers
+pqs.py                  # 6-factor prompt quality scorer (+ pqs_calibration.json percentiles)
+intelligence.py         # loader/accessors for the intelligence layers below
+data/                   # editable intelligence JSON (photography, marketing, art direction, gpt_image_2, nano_banana_pro, category_maps; claims source-cited)
+profiles/               # versioned capability profiles (gpt-image-2@<date>.yaml, nano-banana-pro@<date>.yaml) — source of truth for the model claim JSONs; sync via scripts/sync_profiles.py
+demo.py                 # runnable tour
+scripts/                # scraper, corpus maintenance, regression tests, diversity gate
+references/             # corpus DB, category guides, scraping + analysis write-ups
+research/               # SOURCE_TRUTH.md knowledge base the v2 rebuild was verified against
 ```
 
-### How generation works
+## Maintenance
 
-1. **Intent classification** — your request is mapped to one of 26 categories
-2. **Corpus retrieval** — FTS5 searches the 6,337-prompt corpus for similar prompts
-3. **Intelligence injection** — photography/marketing/art-direction specs are added based on category
-4. **Structure selection** — Flat, Goal+Canvas+Sections, or JSON, based on corpus patterns
-5. **Quality scoring** — the final prompt is graded on 8 dimensions
-6. **Model routing** — the best Higgsfield model is selected (GPT Image 2 vs. Nano Banana 2)
+```bash
+# Re-scrape new prompts (RSC flight-data extractor, no browser)
+python scripts/rsc-prompt-extractor.py --start 27000 --end 30000
 
-## 📖 References
+# All maintenance scripts are copy-safe by default; add --apply to touch the live DB
+python scripts/purge_boilerplate.py   # remove share-widget garbage + exact duplicates
+python scripts/migrate_status.py      # add status column; harvested rows become searchable
+python scripts/rebuild_corpus.py      # enrich all rows + FTS rebuild + VACUUM
 
-The [`references/`](references/) directory contains deep-dive guides:
+# Gates — run after any pipeline change
+python scripts/verify-generation-diversity.py   # diversity + duplication regression gate
+python demo.py
+```
 
-- [`CORPUS-ANALYSIS-REPORT.md`](references/CORPUS-ANALYSIS-REPORT.md) — full statistical analysis of the corpus
-- [`gpt-image-2-techniques.md`](references/gpt-image-2-techniques.md) — the 14 identified prompting techniques
-- [`rsc-extraction-technique.md`](references/rsc-extraction-technique.md) — how we scraped the corpus
-- [`gpt-image2-gallery-scraping.md`](references/gpt-image2-gallery-scraping.md) — gallery scraping methodology
-- Category guides (16 files) — expert specs per category
+## Reproducible build
 
-## 🔗 Related
+The corpus DB is rebuildable from the scraped JSONL export — no binary blob is
+required to reproduce it. The 55 MB DB and the JSONL export are **distributed
+via [GitHub Releases](https://github.com/USER/higgsfield-prompt-master/releases)
+only** (both are gitignored); the build script reproduces the DB from committed
+code either way.
 
-- **[higgsfield-mcp](https://github.com/Ekka-Barber/higgsfield-mcp)** — The companion Hermes skill that uses this tool to generate images via Higgsfield MCP and deliver them as native Telegram photos
-- **[Higgsfield](https://higgsfield.ai)** — The AI image generation platform this tool targets
-- **[Hermes Agent](https://github.com/NousResearch/hermes-agent)** — The AI agent runtime this skill runs inside
+```bash
+# 1. Export the live DB to the JSONL export (the Releases artifact)
+python scripts/build-db.py --export          # -> references/gpt-image2-prompts.jsonl
 
-## 📝 License
+# 2. Rebuild: create schema -> ingest JSONL -> enrich -> FTS rebuild -> VACUUM
+#    -> checksum report + stats-parity gate (row ids, category/model/structure
+#    counts vs the JSONL). Copy-safe: builds to a temp DB, live DB untouched.
+python scripts/build-db.py
 
-MIT — see [`LICENSE`](LICENSE). The prompt corpus itself is scraped from publicly accessible web pages and is provided for research and educational purposes.
+# Replace the live DB with a verified rebuild (previous copy kept as *.db.bak)
+python scripts/build-db.py --apply
+```
 
-## 🙏 Acknowledgments
+The rebuild is byte-deterministic (same JSONL + same code → same DB sha256) and
+prints the DB sha256, JSONL sha256, and a row-content digest — compare the JSONL
+sha256 against the published Releases checksum to verify an export's authenticity.
 
-- The youmind.com community for publishing their GPT Image 2 prompts
-- The Hermes Agent project by Nous Research
-- OpenAI for GPT Image 2 (the model this tool targets)
+Installers can fetch the pinned release DB directly (refuses on any SHA-256
+mismatch against `references/checksums.txt`; `--tag` overrides the default pin):
 
----
+```bash
+python scripts/fetch-db.py
+```
 
-*Built by [Majed](https://github.com/Ekka-Barber) for the Hermes Agent ecosystem.*
+## License
+
+MIT — see [`LICENSE`](LICENSE). The prompt corpus is scraped from publicly accessible web pages and is provided for research and educational purposes.

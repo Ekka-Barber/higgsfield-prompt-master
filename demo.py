@@ -6,10 +6,10 @@ Usage examples and interactive demo.
 """
 
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from higgsfield_prompt import HiggsfieldPromptMaster, search_prompts, get_templates, analyze_patterns, generate_prompt, random_prompt
-from pathlib import Path
 
 def demo():
     hpm = HiggsfieldPromptMaster()
@@ -61,33 +61,33 @@ def demo():
     print("\n✨ PROMPT GENERATION")
     
     print("\n  JSON (App / Web Design):")
-    prompt = hpm.generate_prompt(
+    result = hpm.generate_prompt(
         goal="Real-time analytics dashboard with charts and metrics",
         category="App / Web Design",
         structure="JSON",
         style="Modern, glassmorphism, dark theme, purple/blue accents"
     )
-    print(f"  {prompt[:300]}...")
+    print(f"  {result['prompt'][:300]}...")
     
     print("\n  Template (Product Marketing):")
-    prompt = hpm.generate_prompt(
+    result = hpm.generate_prompt(
         goal="Wireless noise-canceling headphones",
         category="Product Marketing",
         structure="Template",
         style="Premium, minimal, studio lighting",
         aspect_ratio="4:5"
     )
-    print(f"  {prompt[:300]}...")
+    print(f"  {result['prompt'][:300]}...")
     
     print("\n  Flat Prose (Character):")
-    prompt = hpm.generate_prompt(
+    result = hpm.generate_prompt(
         goal="Cyberpunk samurai warrior",
         category="Character",
         structure="Flat prose",
         style="Neon-lit alley, rain, volumetric fog, cinematic",
         aspect_ratio="9:16"
     )
-    print(f"  {prompt[:300]}...")
+    print(f"  {result['prompt'][:300]}...")
     
     # 5. Model comparison
     print("\n⚖️ MODEL COMPARISON: GPT Image 2 vs Nano Banana")

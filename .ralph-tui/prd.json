@@ -1,7 +1,7 @@
 {
   "name": "higgsfield-prompt-master v2 — Evidence-Based Rebuild",
-  "branchName": "ralph/higgsfield-v2-rebuild",
   "description": "Fix crashes, repair corpus, rebuild model intelligence from verified primary sources (research/SOURCE_TRUTH.md), make generation consume retrieval via IR + two prose renderers (gpt-image-2 and nano-banana-pro ONLY — scope locked by owner), validated scoring, tests/CI, reproducible DB pipeline. 33 stories P0->P3 from IMPROVEMENT_PLAN.md Rev 3.",
+  "branchName": "ralph/higgsfield-v2-rebuild",
   "userStories": [
     {
       "id": "US-001",
@@ -17,9 +17,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-002",
@@ -36,9 +37,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-003",
@@ -55,9 +57,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-004",
@@ -73,9 +76,10 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 4,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-005",
@@ -92,9 +96,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 5,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-006",
@@ -111,9 +116,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 6,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-007",
@@ -129,12 +135,13 @@
         "python demo.py completes without traceback"
       ],
       "priority": 7,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-005",
         "US-006"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-008",
@@ -151,11 +158,12 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 8,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-004"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-009",
@@ -172,11 +180,12 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 9,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-008"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-010",
@@ -193,9 +202,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 10,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-011",
@@ -211,13 +221,14 @@
         "python demo.py completes without traceback"
       ],
       "priority": 11,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-005",
         "US-006",
         "US-007"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-012",
@@ -233,11 +244,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 12,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-011"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-013",
@@ -254,13 +266,14 @@
         "python demo.py completes without traceback"
       ],
       "priority": 13,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-009",
         "US-010",
         "US-012"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-014",
@@ -277,11 +290,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 14,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-015",
@@ -298,11 +312,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 15,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-016",
@@ -319,11 +334,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 16,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-017",
@@ -340,11 +356,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 17,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-018",
@@ -359,9 +376,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 18,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-019",
@@ -377,11 +395,12 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 19,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-009"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-020",
@@ -399,11 +418,12 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 20,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-009"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-021",
@@ -419,12 +439,13 @@
         "python demo.py completes without traceback"
       ],
       "priority": 21,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-005",
         "US-006"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-022",
@@ -440,11 +461,12 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 22,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-009"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-023",
@@ -459,12 +481,13 @@
         "python demo.py completes without traceback"
       ],
       "priority": 23,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013",
         "US-017"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-024",
@@ -481,12 +504,13 @@
         "python demo.py completes without traceback"
       ],
       "priority": 24,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-015",
         "US-023"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-025",
@@ -501,9 +525,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 25,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-026",
@@ -519,9 +544,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 26,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-027",
@@ -538,12 +564,13 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 27,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-009",
         "US-020"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-028",
@@ -558,9 +585,10 @@
         "python demo.py completes without traceback"
       ],
       "priority": 28,
-      "passes": false,
+      "passes": true,
       "notes": "",
-      "dependsOn": []
+      "dependsOn": [],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-029",
@@ -577,12 +605,13 @@
         "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
       ],
       "priority": 29,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-026",
         "US-027"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-030",
@@ -597,11 +626,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 30,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-021"
-      ]
+      ],
+      "completionNotes": "Completed by agent"
     },
     {
       "id": "US-031",
@@ -662,5 +692,8 @@
         "US-013"
       ]
     }
-  ]
+  ],
+  "metadata": {
+    "updatedAt": "2026-08-17T12:28:00.509Z"
+  }
 }

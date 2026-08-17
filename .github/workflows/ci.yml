@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install pytest
+        run: pip install pytest
+
+      - name: Compile all modules
+        run: >
+          python -m py_compile db.py retrieval.py generate.py analytics.py cli.py langcheck.py
+          higgsfield_prompt.py ir.py renderers.py pqs.py intelligence.py demo.py
+
+      - name: Run pytest suite (fixture DB via HIGGSFIELD_DB)
+        run: python -m pytest -q
+
+      # The 55 MB corpus DB is gitignored — run the live-corpus gates only
+      # where it exists (dev machines, runners with it restored/cached).
+      - name: Diversity gate on live corpus
+        if: hashFiles('references/gpt-image2-prompts-full.db') != ''
+        run: python scripts/verify-generation-diversity.py
+
+      - name: Demo smoke on live corpus
+        if: hashFiles('references/gpt-image2-prompts-full.db') != ''
+        run: python demo.py

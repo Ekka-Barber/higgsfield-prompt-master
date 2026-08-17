@@ -1,0 +1,120 @@
+{
+  "names": {
+    "_source": "https://developers.openai.com/api/docs/models/gpt-image-2 + https://developers.openai.com/api/docs/deprecations",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "latest": "gpt-image-2",
+    "pinned": "gpt-image-2-2026-04-21",
+    "deprecation": "gpt-image-1 dies 2026-10-23; gpt-image-2 is the sole OpenAI image target"
+  },
+  "structures": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "paragraph": "PRIMARY — cohesive descriptive paragraph, each element paired with its details; minimal, descriptive-paragraph, instruction-style and tag-based prompts all work",
+    "labeled_sections": "OPTIONAL for complexity — Subject / Style / Composition / Color Palette / Lighting / Mood / Additional Details",
+    "json": "NOT recommended — structured layout lives in the engine's internal IR and renders to prose (SOURCE_TRUTH §1)",
+    "complexity_rule": "Break complex requests into a series of simpler prompts; start simple (single clean subject, simple background) and iterate"
+  },
+  "text_rendering": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "quotes": "Put literal text in DOUBLE quotes",
+    "caps": "ALL CAPS signals heading/label emphasis",
+    "letter_spelling": "Spell tricky words letter-by-letter to fix garbled text",
+    "casing": "Keep the user's casing verbatim",
+    "hyphens": "Avoid hyphenation inside words",
+    "fonts": "Simple modern sans-serif fonts for infographics",
+    "keep_lean": "Keep text lean — excessive text is warned against for cost/clutter only; NO numeric word limits exist",
+    "quality_high": "Set quality=high for text-heavy visuals — improves text rendering accuracy"
+  },
+  "exclusions": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "no_negative_param": "There is NO negative_prompt parameter",
+    "positive_first": "State what you want: 'a bright, sunny sky' beats 'not a cloudy sky'",
+    "inline_clause": "Exclude inline: 'without any clouds'"
+  },
+  "references": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "syntax": "Address inputs by ordinal + role: 'the first image… as the background', 'the second image as reference for the character'",
+    "max_inputs": "Up to 16 input images on /v1/images/edits",
+    "batch_edits": "Edits replace the ENTIRE image each call — batch ALL changes into ONE edit call, never sequential",
+    "blending": "To blend multiple refs: merge into one image first, or explicitly instruct combining elements from all images",
+    "world_knowledge": "Well-known logos/objects need NO reference image — name them instead of describing"
+  },
+  "sizes": {
+    "_source": "https://developers.openai.com/api/reference/resources/images + https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "heuristics": "1024x1024 social/avatars; 1024x1536 posters/stories; 1536x1024 banners/hero sections",
+    "presets": "1024x1024, 1536x1024, 1024x1536, auto",
+    "custom": "Arbitrary W×H: both edges multiples of 16, ratio 1:3–3:1, total pixels 262,144–5,529,600, edges 512–3840px",
+    "experimental": "Above 2560x1440 officially experimental (max 3840x2160)",
+    "prompt_cap": "Prompt max length 32,000 characters"
+  },
+  "params": {
+    "_source": "https://developers.openai.com/api/reference/resources/images",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "quality": "low/medium/high/auto — low for fast iteration, high for final output and text-heavy work",
+    "n": "1–10 images per call",
+    "output_format": "png/jpeg/webp (+compression 0–100)",
+    "background": "transparent/opaque/auto (transparent not jpeg)",
+    "moderation": "low/auto",
+    "input_fidelity": "high/low on edits — high recommended for fine-grained edits like text rendering; costs more input tokens",
+    "masks": "Alpha-channel masks (transparent = edit here), PNG, same dimensions"
+  },
+  "ui_mockups": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "world_knowledge": "Lean on the model's world knowledge of real products",
+    "wireframe_mode": "Wireframe-mode screenshots for early-stage UI",
+    "interactive_states": "Specify interactive states (hover, clicked)",
+    "sizes": "Portrait 1024x1536 or custom sizes"
+  },
+  "localization": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "workflow": "Generate English text first, then localize via edit with a reference screenshot",
+    "text_layer": "Instruct 'text layer fully editable' and 'translations that fit naturally within the design'",
+    "style": "Match the original style"
+  },
+  "mistakes": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "official_list": [
+      "Overloading a single prompt",
+      "Vague descriptions",
+      "Conflicting instructions ('minimalist' + 'highly detailed')",
+      "Unspecified aspect ratio",
+      "Excessive text (cost/clutter)",
+      "Low-resolution edit inputs"
+    ]
+  },
+  "camera": {
+    "_source": "https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide",
+    "_date": "2026-08-17",
+    "_confidence": "high",
+    "_review_after": "2027-08-17",
+    "generic": "Generic camera/lens/lighting mention is endorsed for photoreal work",
+    "no_incantations": "Exact lens specs are 'interpreted loosely' — use them for high-level look, not physical simulation"
+  }
+}

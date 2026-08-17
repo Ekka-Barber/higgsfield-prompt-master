@@ -1,8 +1,6 @@
-# ralph-tui project config — higgsfield-prompt-master v2 rebuild
-# Verify with: ralph-tui config show
-
 defaultAgent = "opencode"
 defaultTracker = "json"
 maxIterations = 40
 iterationDelay = 1000
 outputDir = ".ralph-output"
+configVersion = "2.1"

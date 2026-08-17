@@ -20,6 +20,9 @@ venv/
 references/*.db
 references/prompt-id-map.json
 references/gpt-image2-prompts.json
+references/gpt-image2-prompts.jsonl
+references/gpt-image2-prompts-new.jsonl
+references/scrape_log.jsonl
 
 # Local secrets / env
 .env

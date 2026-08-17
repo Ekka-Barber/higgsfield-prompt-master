@@ -1,0 +1,51 @@
+{
+  "composition": {
+    "_source": "original curated layer shipped with the repo corpus build (no external doc)",
+    "_date": "unknown (pre-research curated layer)",
+    "_confidence": "medium",
+    "rule_of_thirds": "Primary subject at upper-right or upper-left third intersection. Horizon line on upper or lower third. Creates dynamic tension and natural eye flow",
+    "golden_ratio": "Subject positioned at golden spiral focal point (0.618 from any edge). Spiral flow guides eye through frame. More organic and pleasing than rule of thirds",
+    "centered_symmetry": "Subject dead-center with mirror symmetry left/right. Conveys formality, power, and stability. Use for hero products and authoritative portraits",
+    "leading_lines": "Converging lines (roads, architecture, shadows, perspective) draw eye from edges to subject at vanishing point. Creates depth and guides attention",
+    "negative_space": "60-70% of frame is empty space, subject occupies 30-40%. Creates breathing room, elegance, and space for text overlay. Essential for editorial and advertising",
+    "fill_the_frame": "Subject fills 90%+ of frame, edges cropped. Creates intimacy, intensity, and detail focus. Use for beauty close-ups and product hero shots",
+    "diagonal_dynamism": "Subjects positioned along diagonal axes (corner to corner). Creates energy, movement, and visual interest. Breaks static feel of horizontal/vertical compositions",
+    "frame_within_frame": "Architectural or environmental elements create a natural frame around subject (doorway, window, arch). Adds depth, context, and focuses attention",
+    "_review_after": "2027-08-17"
+  },
+  "color_theory": {
+    "_source": "original curated layer shipped with the repo corpus build (no external doc)",
+    "_date": "unknown (pre-research curated layer)",
+    "_confidence": "medium",
+    "complementary": "Opposite colors on wheel — blue/orange, red/green, purple/yellow. Maximum contrast and vibrancy. Use for attention-grabbing ads and energetic designs",
+    "analogous": "Adjacent colors — blue/teal/green or red/orange/yellow. Harmonious, calming, natural. Use for lifestyle, wellness, and organic brands",
+    "triadic": "Evenly spaced colors — red/yellow/blue or orange/green/purple. Vibrant but balanced. Use for playful brands and children's content",
+    "monochromatic": "Single hue in varying lightness/saturation. Sophisticated, minimalist, brand-focused. Use for luxury and premium positioning",
+    "split_complementary": "Base color plus two adjacent to its complement. Less tension than complementary, more nuanced. Use for refined commercial work",
+    "_review_after": "2027-08-17"
+  },
+  "contrast": {
+    "_source": "original curated layer shipped with the repo corpus build (no external doc)",
+    "_date": "unknown (pre-research curated layer)",
+    "_confidence": "medium",
+    "high_key": "Bright, airy, predominantly light tones (80%+ highlights). Conveys optimism, purity, cleanliness. Use for beauty, wellness, minimalist product shots",
+    "low_key": "Dark, moody, predominantly shadow tones (70%+ darks). Conveys drama, mystery, luxury. Use for automotive, spirits, high-end fashion",
+    "full_range": "Full tonal range from deep blacks to bright whites. Maximum impact and realism. Use for editorial, documentary, and commercial photography",
+    "flat_design": "Reduced tonal range, minimal shadows, uniform lighting. Conveys modern, clean, digital-native aesthetic. Use for UI/UX and tech brands",
+    "_review_after": "2027-08-17"
+  },
+  "style_references": {
+    "_source": "original curated layer shipped with the repo corpus build (no external doc)",
+    "_date": "unknown (pre-research curated layer)",
+    "_confidence": "medium",
+    "minimalist": "Negative space, limited palette, single focal point, clean sans-serif type. Apple, Muji, Kinfolk magazine aesthetic",
+    "brutalist": "Raw materials, exposed structure, high contrast, oversized type. Balenciaga, Off-White, underground music aesthetic",
+    "art_deco": "Geometric patterns, gold accents, symmetrical layout, luxurious materials. Great Gatsby, vintage travel posters",
+    "bauhaus": "Form follows function, primary colors, geometric shapes, grid-based. Modernist design school aesthetic",
+    "memphis": "Bold patterns, squiggles, bright contrasting colors, playful shapes. 80s postmodern, contemporary fashion campaigns",
+    "y2k": "Chrome, metallic, futuristic, cyber elements, iridescent. Late 90s/early 2000s nostalgia, tech branding",
+    "editorial": "Magazine-quality, high production value, storytelling composition. Vogue, Monocle, Kinfolk",
+    "cinematic": "Film still quality, anamorphic lens flare, teal-orange grade, shallow depth of field. Roger Deakins, Emmanuel Lubezki inspired",
+    "_review_after": "2027-08-17"
+  }
+}
