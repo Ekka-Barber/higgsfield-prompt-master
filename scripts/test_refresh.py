@@ -31,7 +31,15 @@ def conn():
     return c
 
 
-WM = 28686  # live max id at test time (watermark = max(map end 26926, this))
+# Snapshot the live DB before anything runs. Check 5 asserts it is untouched;
+# comparing against this baseline tests that invariant at whatever size the
+# corpus happens to be, rather than pinning a count that goes stale the first
+# time a maintenance script legitimately changes the row total.
+_lc = sqlite3.connect(f"file:{live}?mode=ro", uri=True)
+LIVE_BASELINE = _lc.execute("SELECT MAX(id), COUNT(*) FROM prompts").fetchone()
+_lc.close()
+
+WM = LIVE_BASELINE[0]  # live max id (watermark = max(map end 26926, this))
 ROWS = [
     {"id": WM + 1, "title": "Neon Poster AI Prompt for Minimalist | youmind",
      "model": "GPT Image 2", "categories": ["poster / flyer"],
@@ -132,7 +140,7 @@ print("[OK] main() dry-run: live untouched, scrape JSONL artifact written verbat
 lc = sqlite3.connect(live)
 live_max, live_total = lc.execute("SELECT MAX(id), COUNT(*) FROM prompts").fetchone()
 lc.close()
-assert live_max == WM and live_total == 7613, (live_max, live_total)
+assert (live_max, live_total) == LIVE_BASELINE, (live_max, live_total, LIVE_BASELINE)
 print(f"[OK] live DB untouched: max_id={live_max}, total={live_total}")
 
 if ENV_DB is None:

@@ -33,7 +33,7 @@ _ORDINALS = ("first", "second", "third", "fourth", "fifth", "sixth", "seventh",
              "eighth", "ninth", "tenth", "eleventh", "twelfth", "thirteenth",
              "fourteenth", "fifteenth", "sixteenth")
 
-# ponytail: fixed booster list from SOURCE_TRUTH §8 examples — extend only
+# NOTE: fixed booster list from SOURCE_TRUTH §8 examples — extend only
 # when a new corpus booster shows up in renderer output
 _BOOSTER_RE = re.compile(
     r"\b(?:masterpieces?|best quality|award.?winning|trending on artstation|"
@@ -146,6 +146,48 @@ _SIZE_WIDE = ("1536x1024", "landscape - banners and hero sections")
 _SIZE_SQUARE = ("1024x1024", "square - social posts and avatars")
 
 
+# Hard API limits for gpt-image-2, verified 2026-08-17 against
+# https://developers.openai.com/cookbook/examples/multimodal/image-gen-models-prompting-guide
+# These were previously carried as prose in data/gpt_image_2.json with two wrong
+# numbers (min 262,144 / max 5,529,600) that also contradicted the same file's
+# "max 3840x2160" note -- 4K is 8,294,400 px. Encoded here so they are checkable
+# rather than merely described.
+GPT_IMAGE_2_LIMITS = {
+    "min_pixels": 655_360,
+    "max_pixels": 8_294_400,
+    "max_edge_exclusive": 3840,
+    "edge_multiple": 16,
+    "max_ratio": 3.0,
+    "experimental_above_pixels": 3_686_400,   # 2560x1440
+}
+
+
+def validate_gpt_image_2_size(width: int, height: int) -> list:
+    """Constraint violations for a requested output size; [] means valid.
+
+    A trailing 'experimental' note is a warning, not a violation: sizes above
+    2K are accepted by the API but documented as more variable.
+    """
+    L, problems = GPT_IMAGE_2_LIMITS, []
+    if width <= 0 or height <= 0:
+        return ["width and height must be positive"]
+    if width % L["edge_multiple"] or height % L["edge_multiple"]:
+        problems.append(f"both edges must be multiples of {L['edge_multiple']} "
+                        f"(got {width}x{height})")
+    if max(width, height) >= L["max_edge_exclusive"]:
+        problems.append(f"longest edge must be under {L['max_edge_exclusive']}px "
+                        f"(got {max(width, height)})")
+    px = width * height
+    if px < L["min_pixels"]:
+        problems.append(f"total pixels {px:,} below minimum {L['min_pixels']:,}")
+    if px > L["max_pixels"]:
+        problems.append(f"total pixels {px:,} above maximum {L['max_pixels']:,}")
+    ratio = max(width, height) / min(width, height)
+    if ratio > L["max_ratio"]:
+        problems.append(f"aspect ratio {ratio:.2f}:1 exceeds {L['max_ratio']:.0f}:1")
+    return problems
+
+
 def _size_hint(ar: str):
     """aspect_ratio -> suggested size via official heuristics (or None)."""
     a = (ar or "").strip().lower()
@@ -221,7 +263,7 @@ def render_gpt_image_2(ir: PromptIR) -> str:
 
 # ─── NANO BANANA PRO ────────────────────────────────────────────────────────
 
-# ponytail: small official-example-based rewrite table + 'no signs of' fallback
+# NOTE: small official-example-based rewrite table + 'no signs of' fallback
 _POSITIVE_REWRITES = {
     "watermark": "a clean, unmarked finish",
     "watermarks": "a clean, unmarked finish",

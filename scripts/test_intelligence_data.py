@@ -61,8 +61,24 @@ except ValueError as err:
 print("validation failure path OK:", msg[:60], "...")
 
 # 4. No inline dict literals left in intelligence.py
+#
+# The rule is "knowledge lives in data/*.json", so what must not reappear is a
+# hardcoded dict LITERAL. A dict comprehension that derives a map from data
+# already loaded off disk (US-032's category registry) honours that rule -- but
+# a substring test for "= {" cannot tell the two apart and failed on it. Use the
+# parser: a literal is ast.Dict, a comprehension is ast.DictComp.
+import ast
+
 src = (Path(__file__).parent.parent / "intelligence.py").read_text(encoding="utf-8")
-assert "= {" not in src, "inline dict literal found in intelligence.py"
-print("no inline dicts OK")
+literals = [
+    target.id
+    for node in ast.parse(src).body
+    if isinstance(node, ast.Assign) and isinstance(node.value, ast.Dict)
+    and node.value.keys                      # {} is an empty accumulator, fine
+    for target in node.targets
+    if isinstance(target, ast.Name)
+]
+assert not literals, f"inline dict literal(s) in intelligence.py: {literals}"
+print("no inline dicts OK (dict comprehensions over loaded data allowed)")
 
 print("✅ test_intelligence_data: all checks passed")

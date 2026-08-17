@@ -38,14 +38,19 @@ for pid in r["source_prompt_ids"]:
 
 # ── 2. Stubbing retrieval to [] changes output + empties ids ──
 stubbed = {}
-orig = (hpm.fts_search, hpm.get_templates)
+# Three retrieval sources feed generation: FTS, category templates, and the
+# curated master prompts imported from references/*.md (US-022). All three have
+# to be stubbed to assert the empty case -- otherwise curated rows legitimately
+# still supply an exemplar and source_prompt_ids is non-empty.
+orig = (hpm.fts_search, hpm.get_templates, hpm.search_curated)
 hpm.fts_search = lambda *a, **k: []
 hpm.get_templates = lambda *a, **k: []
+hpm.search_curated = lambda *a, **k: []
 try:
     stubbed = hpm.generate_prompt("Premium skincare serum product shot on marble",
                                   "Product Marketing", "Template", style="modern, clean")
 finally:
-    hpm.fts_search, hpm.get_templates = orig
+    hpm.fts_search, hpm.get_templates, hpm.search_curated = orig
 check(stubbed.get("source_prompt_ids") == [], "stubbed retrieval ids != []")
 check(stubbed.get("prompt") != r["prompt"], "stubbed retrieval output identical to live")
 check(stubbed.get("prompt"), "stubbed retrieval produced empty prompt")
@@ -88,9 +93,15 @@ if row:
     count_phrase = _COUNT_RE.search(exemplar.prompt_text).group(0).lower()
     check(count_phrase in low,
           f"element count phrase {count_phrase!r} from exemplar not preserved in output")
+    # An argument DEFAULT is the donor exemplar's own subject ("fitness app",
+    # "PulseFit"). It must NOT reach the output: that is how an analytics
+    # dashboard goal ended up rendering a fitness brand. Structure transfers
+    # (the element-count phrase checked above), subject matter does not.
     defaults = [d for _, d in _ARG_RE.findall(exemplar.prompt_text) if d]
-    check(any(d.lower() in low for d in defaults),
-          "no argument default from the exemplar reached the rendered output")
+    leaked = [d for d in defaults
+              if d.lower() in low and d.lower() not in "organic tea brand poster"]
+    check(not leaked,
+          f"donor argument default(s) leaked into output: {leaked}")
 
 # Live path: Template generations prefer 2-4-arg exemplars when available
 for goal_i, cat in [("mobile app onboarding screens", "App / Web Design"),

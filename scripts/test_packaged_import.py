@@ -22,7 +22,7 @@ REPO = Path(__file__).resolve().parent.parent
 DB = REPO / "references" / "gpt-image2-prompts-full.db"
 MODULES = ["db.py", "retrieval.py", "generate.py", "analytics.py", "cli.py",
            "ir.py", "renderers.py", "pqs.py", "intelligence.py",
-           "langcheck.py", "higgsfield_prompt.py"]
+           "langcheck.py", "feedback.py", "higgsfield_prompt.py"]
 
 CLEAN = """
 import hpm_test

@@ -24,7 +24,13 @@ tpl = ('Goal: Create a poster titled {argument name="headline text" default="SAL
        '\nLayout: Arrange content into exactly 8 numbered badges in three '
        'columns without watermarks.')
 ir = extract_ir(tpl)
-assert any("headline" in f.lower() for f in ir.text_elements), ir.text_elements
+# A template argument NAME is a slot to fill, not copy to render in the image.
+# It used to land in text_elements because the quoted-string scanner read
+# {argument name="headline text"} as literal text -- so the model was asked to
+# draw the words "headline text". It belongs in template_slots instead.
+assert any("headline" in s.lower() for s in ir.template_slots), ir.template_slots
+assert not any("headline text" in f.lower() for f in ir.text_elements), \
+    f"template argument name leaked into text_elements: {ir.text_elements}"
 assert ir.aspect_ratio == "4:5", ir.aspect_ratio
 assert any("8 numbered badges" in f for f in ir.composition), ir.composition
 assert any("three columns" in f.lower() for f in ir.composition), ir.composition

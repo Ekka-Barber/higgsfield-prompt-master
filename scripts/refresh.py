@@ -118,6 +118,7 @@ def refresh_db(target, raw_rows, misses):
     conn.execute("CREATE TABLE IF NOT EXISTS scrape_log ("
                  "id INTEGER PRIMARY KEY, status TEXT, error TEXT, timestamp TEXT)")
     where = searchable_where(conn)
+    has_status = "status" in [r[1] for r in conn.execute("PRAGMA table_info(prompts)")]
 
     total_before, searchable_before = conn.execute(
         f"SELECT COUNT(*), (SELECT COUNT(*) FROM prompts WHERE {where})"
@@ -150,14 +151,30 @@ def refresh_db(target, raw_rows, misses):
                 summary["changed"] += 1
         else:
             summary["inserted"] += 1
-        conn.execute(
-            "INSERT INTO prompts (id,title,description,prompt_text,categories,model,"
-            "slug,scraped_at,has_prompt) VALUES (?,?,?,?,?,?,?,?,?)"
-            " ON CONFLICT(id) DO UPDATE SET title=excluded.title,"
-            " description=excluded.description, prompt_text=excluded.prompt_text,"
-            " categories=excluded.categories, model=excluded.model,"
-            " scraped_at=excluded.scraped_at",
-            tuple(row[c] for c in RAW_COLS))
+        # Post-migration, visibility is driven by `status`, not has_prompt (see
+        # _searchable_clause). Inserting without it would leave every newly
+        # scraped prompt NULL-status and therefore invisible to search -- the
+        # same class of bug as the 1,276 rows the status migration just fixed.
+        if has_status:
+            conn.execute(
+                "INSERT INTO prompts (id,title,description,prompt_text,categories,"
+                "model,slug,scraped_at,has_prompt,status)"
+                " VALUES (?,?,?,?,?,?,?,?,?,'curated')"
+                " ON CONFLICT(id) DO UPDATE SET title=excluded.title,"
+                " description=excluded.description, prompt_text=excluded.prompt_text,"
+                " categories=excluded.categories, model=excluded.model,"
+                " scraped_at=excluded.scraped_at,"
+                " status=COALESCE(prompts.status, 'curated')",
+                tuple(row[c] for c in RAW_COLS))
+        else:
+            conn.execute(
+                "INSERT INTO prompts (id,title,description,prompt_text,categories,model,"
+                "slug,scraped_at,has_prompt) VALUES (?,?,?,?,?,?,?,?,?)"
+                " ON CONFLICT(id) DO UPDATE SET title=excluded.title,"
+                " description=excluded.description, prompt_text=excluded.prompt_text,"
+                " categories=excluded.categories, model=excluded.model,"
+                " scraped_at=excluded.scraped_at",
+                tuple(row[c] for c in RAW_COLS))
         # Scoped enrichment: only the touched id (never a corpus-wide sweep —
         # the live DB still carries 1,276 deliberately-unenriched rows).
         conn.execute("UPDATE prompts SET structure_type=?, length_chars=?, technique_tags=?"
