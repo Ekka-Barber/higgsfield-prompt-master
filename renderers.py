@@ -41,6 +41,10 @@ _BOOSTER_RE = re.compile(
     r"extremely detailed|highly detailed|intricate details?|sharp focus)\b",
     re.I)
 _REFN_RE = re.compile(r"\bREFERENCE_?(\d+)\b", re.I)
+# Detects a raw JSON object leaking into a prose fragment, and pulls out just the
+# readable string values so the description survives without the syntax.
+_JSONISH_RE = re.compile(r'\{\s*"|"\s*:\s*"')
+_JSON_VALUE_RE = re.compile(r'"\s*:\s*"([^"]{2,120})"')
 _PREFIX_RE = re.compile(r"^([A-Za-z][A-Za-z0-9 /&-]{0,38}):\s+(.+)$", re.S)
 _EQ_RE = re.compile(r"^([a-z][a-z0-9 _]{1,30})\s*=\s*(.+)$", re.S)
 _WORD_LIMIT_RE = re.compile(
@@ -71,9 +75,22 @@ def _clean(fragment: str) -> str:
     frag = _REFN_RE.sub(lambda mm: f"the {_ordinal(int(mm.group(1)))} image",
                         frag)
     frag = _BOOSTER_RE.sub("", frag)
+    # A JSON exemplar's raw object must never reach a prose renderer -- it
+    # arrives truncated ('{"visual_language": "...", "primary_accent":') and is
+    # syntax, not description. Keep the human-readable values, drop the braces.
+    if _JSONISH_RE.search(frag):
+        frag = ", ".join(v for v in _JSON_VALUE_RE.findall(frag) if len(v) > 3)
     frag = re.sub(r"\s{2,}", " ", frag)
+    frag = re.sub(r"[-–]\s*,", ",", frag)
+    frag = re.sub(r"\s+([,.;:])", r"\1", frag)
     frag = re.sub(r"\s*,(\s*,)+", ",", frag).strip(" ,.;-")
     return frag
+
+
+def _dedup_key(text: str) -> str:
+    """Normalised signature for near-duplicate detection: fragments differing
+    only in punctuation or a trailing dash are the same sentence."""
+    return " ".join(re.findall(r"[a-z0-9]+", text.lower())[:10])
 
 
 def _join(frags, seen=None) -> str:
@@ -82,10 +99,15 @@ def _join(frags, seen=None) -> str:
     out = []
     for f in frags:
         c = _clean(f)
-        low = c.lower()
-        if len(c) >= 3 and low not in seen:
-            seen.add(low)
-            out.append(c)
+        if len(c) < 3:
+            continue
+        key = _dedup_key(c)
+        # Exact, normalised, and containment checks -- the corpus repeats the
+        # same clause with small edits across sections of one exemplar.
+        if key in seen or any(key and key in s for s in seen):
+            continue
+        seen.add(key)
+        out.append(c)
     return ", ".join(out)
 
 

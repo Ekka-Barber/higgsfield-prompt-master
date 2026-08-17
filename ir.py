@@ -41,6 +41,13 @@ class PromptIR:
     text_elements: list = field(default_factory=list)
     negative_concepts: list = field(default_factory=list)
     references: list = field(default_factory=list)
+    # Names of the exemplar's template arguments (structure borrowed from the
+    # corpus). Filled from the user's goal at render time, never from the
+    # exemplar's own defaults.
+    template_slots: list = field(default_factory=list)
+    # The donor exemplar's own subject terms (its template-argument defaults),
+    # collected so scrub_exemplar_identity can delete them from borrowed prose.
+    donor_terms: list = field(default_factory=list)
     aspect_ratio: str = ""
     output_intent: str = "general_image"
     quality_tier: str = "standard"
@@ -56,6 +63,58 @@ class PromptIR:
             return
         if len(bucket) < 6:
             bucket.append(frag[:300])
+
+    def scrub_exemplar_identity(self, goal: str):
+        """Strip the donor exemplar's own subject matter from borrowed fragments.
+
+        An exemplar contributes STRUCTURE (which sections exist, how many
+        elements, what aspect ratio) -- never its subject. Without this, a
+        'analytics dashboard' goal that retrieves a fitness-app template renders
+        'PulseFit' and 'calories burned, workout streak' into the user's prompt.
+
+        Two rules, both conservative:
+          1. Drop brand-like coinages -- interior-capital words such as
+             'PulseFit'. Deliberately narrow: ordinary capitalised words
+             ('Instagram', 'Design') are left alone.
+          2. Drop enumeration clauses -- three or more comma-separated items of
+             which none appear in the goal. Those enumerate the donor's content,
+             whereas aesthetic phrasing ('soft shadows', 'dark mode') transfers.
+        """
+        goal_words = {w for w in re.findall(r"[a-z]+", goal.lower()) if len(w) > 3}
+        for slot in _LIST_SLOTS:
+            kept = []
+            for frag in getattr(self, slot):
+                frag = _BRANDISH_RE.sub("", frag)
+                for term in self.donor_terms:
+                    if term not in goal.lower():  # keep it if the user asked for it
+                        frag = re.sub(re.escape(term), "", frag, flags=re.I)
+                # Deleting words leaves orphaned punctuation ("- , sharp text",
+                # "Crisp typography,"). Repair before the fragment is rendered.
+                frag = re.sub(r"\s{2,}", " ", frag)
+                frag = re.sub(r"[-–]\s*,", ",", frag)
+                frag = re.sub(r"\s+([,.;:])", r"\1", frag)
+                frag = re.sub(r"(,\s*){2,}", ", ", frag)
+                frag = frag.strip(" ,;:-")
+                if len(frag) < 3:
+                    continue
+                items = [i.strip() for i in frag.split(",") if i.strip()]
+                if len(items) >= 3:
+                    # Filter per item, not per fragment: one on-topic item must
+                    # not rescue a whole list of the donor's content. An item
+                    # survives if it echoes the goal or is transferable design
+                    # vocabulary ("soft shadows"); donor specifics
+                    # ("calories burned") drop out.
+                    items = [
+                        i for i in items
+                        if _AESTHETIC_RE.search(i)
+                        or any(w in goal_words
+                               for w in re.findall(r"[a-z]+", i.lower()))
+                    ]
+                    if not items:
+                        continue
+                    frag = ", ".join(items)
+                kept.append(frag)
+            setattr(self, slot, kept)
 
     def filled(self) -> list:
         """Names of slots carrying at least one fragment/value."""
@@ -142,6 +201,27 @@ _ARG_RE = re.compile(
     r'\{argument\s+name=\\?"([^"\\]+)\\?"\s+default=\\?"([^"\\]*)\\?"\}')
 _QUOTED_RE = re.compile(r'"([^"\n]{2,80})"')
 _CAPS_RE = re.compile(r"\b[A-Z][A-Z0-9 &'-]{3,}\b")
+# Brand-like coinages with an interior capital ("PulseFit", "FitTrack"). Used to
+# strip a donor exemplar's brand out of borrowed fragments. Intentionally narrow
+# so ordinary capitalised words survive.
+_BRANDISH_RE = re.compile(r"\b[A-Z][a-z]+[A-Z][A-Za-z]*\b")
+# Design vocabulary that transfers between subjects. An enumeration item matching
+# this is kept even when it does not echo the goal, because it describes HOW the
+# image should look rather than WHAT the donor exemplar depicted.
+# Words that show up inside template defaults but carry no donor identity, so
+# denying them would strip ordinary vocabulary from every generated prompt.
+_GENERIC_DEFAULT_WORDS = {
+    "brand", "product", "modern", "clean", "simple", "image", "photo", "design",
+    "style", "colour", "color", "white", "black", "light", "background", "text",
+    "title", "header", "layout", "screen", "page", "website", "green", "blue",
+}
+_AESTHETIC_RE = re.compile(
+    r"\b(shadow|spacing|hierarchy|typograph|font|minimal|modern|clean|gradient|"
+    r"rounded|corner|contrast|palette|colou?r|whitespace|grid|align|bold|subtle|"
+    r"margin|padding|layout|composition|balance|symmetr|texture|matte|glossy|"
+    r"lighting|light|depth|blur|bokeh|sharp|crisp|muted|vibrant|pastel|neutral|"
+    r"dark mode|light mode|flat|glass|shade|tone|hue|saturation|border|radius)",
+    re.I)
 
 _HIGH_TIER_RE = re.compile(
     r"hyper.?realistic|photorealistic|ultra.?detailed|highly detailed|"
@@ -217,9 +297,28 @@ def _from_json(obj: dict, ir: PromptIR):
 def _from_prose(text: str, ir: PromptIR):
     """Template/prose exemplar: template arguments, section headers
     (zone names), then clause keyword buckets."""
+    # Template arguments are STRUCTURE, not content. The name tells us what the
+    # exemplar parameterises ("brand name", "app type"); the default is that
+    # exemplar's own domain ("PulseFit", "fitness app"). Emitting the default
+    # leaks another prompt's subject into ours -- e.g. an analytics-dashboard
+    # goal rendering "app type = fitness app, brand name = PulseFit". Record the
+    # names as slots for the generator to fill from the goal; drop the defaults.
     for name, default in _ARG_RE.findall(text):
-        slot = _match_slot(name) or "composition"
-        ir.add(slot, f"{name} = {default}" if default else name)
+        name = " ".join(name.split())
+        if name and name.lower() not in {s.lower() for s in ir.template_slots}:
+            ir.template_slots.append(name)
+        # The defaults ARE this exemplar's subject matter ("fitness app",
+        # "PulseFit"). Record them as an exact denylist so scrub can remove them
+        # wherever they also appear in the donor's prose, not just in the tag.
+        default = " ".join(default.split())
+        if len(default) > 2 and default.lower() not in ir.donor_terms:
+            ir.donor_terms.append(default.lower())
+        # Also deny the distinctive single words inside a multi-word default, so
+        # "fitness app" additionally suppresses a stray "premium fitness brand".
+        for word in re.findall(r"[A-Za-z]{5,}", default):
+            w = word.lower()
+            if w not in _GENERIC_DEFAULT_WORDS and w not in ir.donor_terms:
+                ir.donor_terms.append(w)
     for header, content in _SECTION_RE.findall(text):
         content = content.strip()
         slot = _match_slot(header)
@@ -246,7 +345,9 @@ def _scan_universal(text: str, ir: PromptIR, is_json: bool):
     for m in _REF_RE.finditer(text):
         ir.add("references", _trim(m.group(0), 120))
     if not is_json:  # JSON quotes are syntax, not text elements
-        for q in _QUOTED_RE.findall(text):
+        # Template tags are syntax too: {argument name="app type" default="x"}
+        # would otherwise register "app type" as copy to render in the image.
+        for q in _QUOTED_RE.findall(_ARG_RE.sub(" ", text)):
             ir.add("text_elements", f'"{q}"')
         for c in _CAPS_RE.findall(text):
             if sum(ch.isalpha() for ch in c) >= 4:

@@ -129,6 +129,11 @@ class GenerationMixin:
                 elif getattr(d, f) and not getattr(ir, f):
                     setattr(ir, f, getattr(d, f))
 
+        # Exemplars lend structure, not subject matter. Scrub the donors' own
+        # brands and content enumerations before the goal is layered in, so a
+        # dashboard goal never inherits a fitness template's product name.
+        ir.scrub_exemplar_identity(goal)
+
         # ── 3. Fill slots from goal + corrected intelligence layers ──
         # Goal platform keywords beat the category map (US-013); photo is
         # None for non-photo categories (US-010).
