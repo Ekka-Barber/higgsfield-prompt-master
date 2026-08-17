@@ -67,6 +67,11 @@ def main(argv=None) -> int:
 
     sub.add_parser("verify", parents=[json_flag], help="run scripts/verify-generation-diversity.py")
 
+    p = sub.add_parser("feedback", parents=[json_flag],
+                       help="acceptance rates per injected layer (US-031; opt-in logging)")
+    p.add_argument("--outcome", nargs=2, metavar=("LOG_ID", "VERDICT"),
+                   help="record a verdict: accepted | edited | regenerated")
+
     args = parser.parse_args(argv)
     hpm = HiggsfieldPromptMaster()
 
@@ -118,6 +123,29 @@ def main(argv=None) -> int:
     if args.command == "verify":
         script = _REPO_ROOT / "scripts" / "verify-generation-diversity.py"
         return subprocess.run([sys.executable, str(script)]).returncode
+
+    if args.command == "feedback":
+        import feedback
+        if args.outcome:
+            log_id, verdict = args.outcome
+            ok = feedback.record_outcome(int(log_id), verdict)
+            print(f"log {log_id} -> {verdict}" if ok else f"no log row {log_id}")
+            return 0 if ok else 1
+        rates = feedback.acceptance_rates()
+        if args.json:
+            _print_json(rates)
+        elif not rates["logged"]:
+            print("No generations logged. Logging is opt-in: set HIGGSFIELD_LOG=1 "
+                  "or call feedback.enable().")
+        else:
+            print(f"{rates['logged']} generations, {rates['with_outcome']} judged "
+                  f"({rates['path']})")
+            for title, bucket in (("layer", rates["by_layer"]),
+                                  ("model", rates["by_model"])):
+                for key, s in sorted(bucket.items()):
+                    rate = "n/a" if s["acceptance"] is None else f"{s['acceptance']:.0%}"
+                    print(f"  {title} {key:<14} acceptance={rate:>4}  n={s['total']}")
+        return 0
 
     return 1  # unreachable: subparsers are required
 

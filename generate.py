@@ -196,7 +196,7 @@ class GenerationMixin:
 
         score = self._quality_score(prompt_text, norm_cat, goal)
 
-        return {
+        result = {
             "prompt": prompt_text,
             "model_recommendation": model_rec,
             "aspect_ratio": aspect_ratio or ir.aspect_ratio or "1:1",
@@ -210,6 +210,17 @@ class GenerationMixin:
             "length": len(prompt_text),
             "warnings": warnings,
         }
+
+        # US-031: opt-in only, writes to its own DB, never raises. When active
+        # the row id comes back so a caller can attach an outcome later.
+        try:
+            from feedback import log_generation
+        except ImportError:
+            from .feedback import log_generation
+        log_id = log_generation(goal, norm_cat, result)
+        if log_id is not None:
+            result["log_id"] = log_id
+        return result
 
     #: Optional callable ``(str) -> str`` translating a goal into English.
     #: Left unset by default: this package is pure stdlib and offline, so it
