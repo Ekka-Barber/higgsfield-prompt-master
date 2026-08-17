@@ -493,6 +493,9 @@ class PQSScorer:
         gl["df"] = calib["df"]
         self._gl = gl
         self._dist = calib["dist"]
+        # Optional: distribution over the generator's own output, written by
+        # scripts/calibrate_pqs.py. Preferred for grading (see score()).
+        self._gen_dist = calib.get("gen_dist") or {}
 
     def _idf(self, t: str) -> float:
         g = self._gl
@@ -503,7 +506,15 @@ class PQSScorer:
         factors, x = _factors(raw, _goal_terms(goal), self._idf, self._gl)
         total = _pqs_total(factors, x)
 
-        arr = self._dist.get(category) or self._dist["_all"]
+        # Grade against generated prompts when that distribution exists.
+        # The corpus distribution is scored with each row's title standing in
+        # for a goal, so corpus goal-fidelity is near zero while a generated
+        # prompt contains its goal verbatim and scores ~1.0. Comparing the two
+        # put every generated prompt above the 99th percentile -- the reference
+        # set has to be measured under the same conditions as the item.
+        gen = getattr(self, "_gen_dist", None) or {}
+        arr = (gen.get(category) or gen.get("_all")
+               or self._dist.get(category) or self._dist["_all"])
         pct = bisect.bisect_left(arr, total) / max(len(arr), 1) * 100.0
         grade = ("A+" if pct >= 90 else "A" if pct >= 75 else "B" if pct >= 50
                  else "C" if pct >= 25 else "D")
