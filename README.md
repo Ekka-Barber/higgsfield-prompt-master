@@ -128,7 +128,8 @@ ir.py                   # prompt intermediate representation + extract_ir (JSON/
 renderers.py            # render_gpt_image_2 / render_nano_banana_pro prose renderers
 pqs.py                  # 6-factor prompt quality scorer (+ pqs_calibration.json percentiles)
 intelligence.py         # loader/accessors for the intelligence layers below
-data/                   # editable intelligence JSON (photography, marketing, art direction, gpt_image_2, nano_banana_pro, category_maps; claims source-cited)
+data/                   # editable intelligence JSON (photography, marketing, art direction, gpt_image_2, nano_banana_pro; claims source-cited)
+                        # plus categories.json — the category registry (canonical names, aliases, photo/marketing routing)
 profiles/               # versioned capability profiles (gpt-image-2@<date>.yaml, nano-banana-pro@<date>.yaml) — source of truth for the model claim JSONs; sync via scripts/sync_profiles.py
 demo.py                 # runnable tour
 scripts/                # scraper, corpus maintenance, regression tests, diversity gate

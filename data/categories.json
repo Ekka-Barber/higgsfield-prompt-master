@@ -1,0 +1,143 @@
+{
+  "_comment": "Single source of truth for categories (US-032). db.CATEGORY_NORMALIZE and intelligence's photo/marketing maps are derived from this at load, so adding a category is one edit here rather than six across modules.",
+  "categories": [
+    {
+      "name": "Abstract / Background",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "Animal / Creature",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "App / Web Design",
+      "aliases": [
+        "app/web design"
+      ],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "Architecture / Interior",
+      "aliases": [],
+      "photo": "architectural",
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Cinematic / Film Still",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "Comic / Storyboard",
+      "aliases": [
+        "comic/storyboard"
+      ],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "E-commerce Main Image",
+      "aliases": [
+        "ecommerce main image"
+      ],
+      "photo": "product",
+      "marketing": "ecommerce",
+      "non_photo": false
+    },
+    {
+      "name": "Game Asset",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "Group / Couple",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Infographic / Edu Visual",
+      "aliases": [
+        "infographic/edu visual"
+      ],
+      "photo": null,
+      "marketing": null,
+      "non_photo": true
+    },
+    {
+      "name": "Landscape / Nature",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Portrait / Selfie",
+      "aliases": [],
+      "photo": "portrait",
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Poster / Flyer",
+      "aliases": [
+        "poster/flyer"
+      ],
+      "photo": "product",
+      "marketing": "poster",
+      "non_photo": false
+    },
+    {
+      "name": "Product Marketing",
+      "aliases": [],
+      "photo": "product",
+      "marketing": "ecommerce",
+      "non_photo": false
+    },
+    {
+      "name": "Profile / Avatar",
+      "aliases": [
+        "profile/avatar"
+      ],
+      "photo": "portrait",
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Sketch / Line Art",
+      "aliases": [],
+      "photo": null,
+      "marketing": null,
+      "non_photo": false
+    },
+    {
+      "name": "Social Media Post",
+      "aliases": [],
+      "photo": "lifestyle",
+      "marketing": "instagram_feed",
+      "non_photo": false
+    },
+    {
+      "name": "YouTube Thumbnail",
+      "aliases": [],
+      "photo": null,
+      "marketing": "youtube_thumbnail",
+      "non_photo": true
+    }
+  ]
+}

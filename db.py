@@ -91,32 +91,29 @@ STRUCTURE_TYPES = {
     "Other": lambda t: True,
 }
 
-CATEGORY_NORMALIZE = {
-    "app / web design": "App / Web Design",
-    "app/web design": "App / Web Design",
-    "product marketing": "Product Marketing",
-    "social media post": "Social Media Post",
-    "poster / flyer": "Poster / Flyer",
-    "poster/flyer": "Poster / Flyer",
-    "comic / storyboard": "Comic / Storyboard",
-    "comic/storyboard": "Comic / Storyboard",
-    "profile / avatar": "Profile / Avatar",
-    "profile/avatar": "Profile / Avatar",
-    "game asset": "Game Asset",
-    "infographic / edu visual": "Infographic / Edu Visual",
-    "infographic/edu visual": "Infographic / Edu Visual",
-    "youtube thumbnail": "YouTube Thumbnail",
-    "e-commerce main image": "E-commerce Main Image",
-    "ecommerce main image": "E-commerce Main Image",
-    "portrait / selfie": "Portrait / Selfie",
-    "landscape / nature": "Landscape / Nature",
-    "architecture / interior": "Architecture / Interior",
-    "cinematic / film still": "Cinematic / Film Still",
-    "abstract / background": "Abstract / Background",
-    "animal / creature": "Animal / Creature",
-    "group / couple": "Group / Couple",
-    "sketch / line art": "Sketch / Line Art",
-}
+def _load_category_registry():
+    """Derive the alias->canonical map from data/categories.json (US-032).
+
+    One registry generates CATEGORY_NORMALIZE here and the photo/marketing maps
+    in intelligence.py, so adding a category is a single edit instead of six
+    coordinated ones. Falls back to canonical-only normalisation if the file is
+    missing, which keeps a partial install working rather than crashing import.
+    """
+    path = Path(__file__).resolve().parent / "data" / "categories.json"
+    mapping = {}
+    try:
+        reg = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return mapping
+    for entry in reg.get("categories", []):
+        name = entry["name"]
+        mapping[name.lower()] = name
+        for alias in entry.get("aliases", []):
+            mapping[alias.lower()] = name
+    return mapping
+
+
+CATEGORY_NORMALIZE = _load_category_registry()
 
 @dataclass
 class Prompt:

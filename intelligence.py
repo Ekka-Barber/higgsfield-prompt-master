@@ -17,8 +17,10 @@ Files (data/):
                         rebuilt per research/SOURCE_TRUTH.md §3)
   nano_banana_pro.json— Google official-docs guidance for
                         gemini-3-pro-image (12 claim groups, SOURCE_TRUTH §4)
-  category_maps.json  — category → photo/marketing routing tables
-                         (routing config, not claims — no provenance keys)
+  categories.json     — the category registry: canonical names, aliases, and
+                        photo/marketing routing. Single source for this
+                        module's maps and db.CATEGORY_NORMALIZE
+                        (routing config, not claims — no provenance keys)
 
 Every claim group in the five claim files must carry _source/_date/
 _confidence/_review_after evidence fields; the loader raises ValueError
@@ -70,9 +72,16 @@ ART_DIRECTION = _load("art_direction.json")
 # CATEGORY → INTELLIGENCE MAPPING
 # ═══════════════════════════════════════════════════════════════════
 
-_maps = _load("category_maps.json", provenance=False)
-CATEGORY_PHOTO_MAP = _maps["photo"]
-CATEGORY_MARKETING_MAP = _maps["marketing"]
+# Derived from the single category registry (US-032) so a new category is one
+# edit in data/categories.json rather than six across db.py and this module.
+# A category's "photo": null is meaningful -- it marks an explicit non-photo
+# category, which get_photo_intelligence() must distinguish from "unmapped"
+# (US-010), so the key is kept with a None value rather than dropped.
+_registry = _load("categories.json", provenance=False)["categories"]
+CATEGORY_PHOTO_MAP = {c["name"]: c["photo"] for c in _registry
+                      if c["photo"] is not None or c["non_photo"]}
+CATEGORY_MARKETING_MAP = {c["name"]: c["marketing"] for c in _registry
+                          if c["marketing"] is not None}
 
 def get_photo_intelligence(category: str, goal: str = "") -> "dict | None":
     """Get photography settings for a category, with goal-based override.
