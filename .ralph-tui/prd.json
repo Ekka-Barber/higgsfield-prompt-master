@@ -1,6 +1,6 @@
 {
-  "name": "higgsfield-prompt-master v2 — Evidence-Based Rebuild",
-  "description": "Fix crashes, repair corpus, rebuild model intelligence from verified primary sources (research/SOURCE_TRUTH.md), make generation consume retrieval via IR + two prose renderers (gpt-image-2 and nano-banana-pro ONLY — scope locked by owner), validated scoring, tests/CI, reproducible DB pipeline. 33 stories P0->P3 from IMPROVEMENT_PLAN.md Rev 3.",
+  "name": "higgsfield-prompt-master v2 \u2014 Evidence-Based Rebuild",
+  "description": "Fix crashes, repair corpus, rebuild model intelligence from verified primary sources (research/SOURCE_TRUTH.md), make generation consume retrieval via IR + two prose renderers (gpt-image-2 and nano-banana-pro ONLY \u2014 scope locked by owner), validated scoring, tests/CI, reproducible DB pipeline. 33 stories P0->P3 from IMPROVEMENT_PLAN.md Rev 3.",
   "branchName": "ralph/higgsfield-v2-rebuild",
   "userStories": [
     {
@@ -73,7 +73,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 4,
       "passes": true,
@@ -155,7 +155,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 8,
       "passes": true,
@@ -177,7 +177,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 9,
       "passes": true,
@@ -392,7 +392,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 19,
       "passes": true,
@@ -415,7 +415,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 20,
       "passes": true,
@@ -458,7 +458,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 22,
       "passes": true,
@@ -561,7 +561,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 27,
       "passes": true,
@@ -602,7 +602,7 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 29,
       "passes": true,
@@ -644,14 +644,15 @@
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback",
-        "DB changes run on a copy via HIGGSFIELD_DB by default; live DB only with explicit --apply"
+        "Script defaults to a copy via HIGGSFIELD_DB; --apply writes the live DB. DONE REQUIRES THE LIVE DB TO SHOW THE CHANGE -- re-verify the affected counters after --apply. Passing on a copy alone does not close the story."
       ],
       "priority": 31,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed and verified 2026-08-17"
     },
     {
       "id": "US-032",
@@ -667,11 +668,12 @@
         "python demo.py completes without traceback"
       ],
       "priority": 32,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-021"
-      ]
+      ],
+      "completionNotes": "Completed and verified 2026-08-17"
     },
     {
       "id": "US-033",
@@ -679,21 +681,23 @@
       "description": "As an Arabic-speaking user, I want non-Latin goals handled, not silently degraded.",
       "acceptanceCriteria": [
         "Non-Latin goal detection -> explicit warning in result + translate-then-retrieve path (injectable translation hook, offline stub documented)",
-        "generate_prompt(goal='مشرقي') returns relevant results or a clear warning, never silent generic output",
+        "generate_prompt(goal='\u0645\u0634\u0631\u0642\u064a') returns relevant results or a clear warning, never silent generic output",
         "python -m py_compile passes on all changed .py files",
         "python -c \"from higgsfield_prompt import HiggsfieldPromptMaster; HiggsfieldPromptMaster().stats()\" succeeds from repo root",
         "python scripts/verify-generation-diversity.py exits 0",
         "python demo.py completes without traceback"
       ],
       "priority": 33,
-      "passes": false,
+      "passes": true,
       "notes": "",
       "dependsOn": [
         "US-013"
-      ]
+      ],
+      "completionNotes": "Completed and verified 2026-08-17"
     }
   ],
   "metadata": {
-    "updatedAt": "2026-08-17T12:28:00.509Z"
+    "updatedAt": "2026-08-17T16:00:00.000Z",
+    "note": "All 33 stories verified against live state on 2026-08-17. The six DB stories had previously passed copy-safe without the live corpus ever changing; their criteria now require live verification."
   }
 }
