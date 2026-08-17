@@ -1,15 +1,15 @@
 ---
-name: hf-arabic
+name: rasm-arabic
 description: >
   Arabic typography and RTL design specialist for AI image generation. Handles
   Arabic text-in-image, calligraphy styles (Kufi, Naskh, Thuluth, Diwani),
   bilingual lockups, tashkeel, numerals, and the RTL layout trap. Use for
-  /hf-arabic, "خط عربي", "كاليجرافي", "تايبوغرافي عربي", "Arabic calligraphy",
+  /rasm-arabic, "خط عربي", "كاليجرافي", "تايبوغرافي عربي", "Arabic calligraphy",
   "Arabic typography", "RTL design", "bilingual Arabic English design", or any
   design where Arabic lettering is the point.
 ---
 
-# /hf-arabic — Arabic typography & RTL specialist
+# /rasm-arabic — Arabic typography & RTL specialist
 
 The flagship. Use when the Arabic lettering *is* the design, not a caption on it.
 

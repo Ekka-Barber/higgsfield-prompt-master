@@ -1,13 +1,13 @@
 ---
-name: hf-poster
+name: rasm-poster
 description: >
   Posters, flyers, banners, signage and event announcements — Arabic-first, with
-  print-safe sizing and RTL typographic hierarchy. Use for /hf-poster, "بوستر",
+  print-safe sizing and RTL typographic hierarchy. Use for /rasm-poster, "بوستر",
   "ملصق", "فلاير", "لوحة", "إعلان", "poster", "flyer", "banner", "signage",
   "event announcement".
 ---
 
-# /hf-poster — posters, flyers, signage
+# /rasm-poster — posters, flyers, signage
 
 Posters are a **typographic hierarchy** problem before they are an image
 problem. Get the levels right and the rest follows.

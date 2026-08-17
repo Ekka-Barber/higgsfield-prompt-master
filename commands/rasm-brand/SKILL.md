@@ -1,13 +1,13 @@
 ---
-name: hf-brand
+name: rasm-brand
 description: >
   Logos, Arabic wordmarks, monograms and brand identity systems — including
-  bilingual Arabic/Latin lockups. Use for /hf-brand, "شعار", "لوقو", "هوية
+  bilingual Arabic/Latin lockups. Use for /rasm-brand, "شعار", "لوقو", "هوية
   بصرية", "علامة تجارية", "logo", "wordmark", "brand identity", "monogram",
   "visual identity".
 ---
 
-# /hf-brand — logos, wordmarks & identity
+# /rasm-brand — logos, wordmarks & identity
 
 Read `../_shared/arabic-rules.md` first — an Arabic wordmark is a letterform
 problem, and this is where letter shaping matters most. Also read

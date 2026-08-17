@@ -1,14 +1,14 @@
 ---
-name: hf
+name: rasm
 description: >
   Arabic-first AI image prompt generator. Grills you into a precise brief, routes
   to the right model (Nano Banana Pro / GPT Image 2), and writes a
   production-grade prompt. Arabic is the default; English needs --en. Use when
-  the user says /hf, "اعمل لي صورة", "صمم", "بوستر", "generate an image prompt",
+  the user says /rasm, "اعمل لي صورة", "صمم", "بوستر", "generate an image prompt",
   "design a poster", or asks for any AI image/design prompt.
 ---
 
-# /hf — Arabic-first image prompt generator
+# /rasm — Arabic-first image prompt generator
 
 The front door. Grill → route → generate.
 
@@ -30,13 +30,13 @@ output, or explicitly says "in English" / "بالإنجليزي".
 
    | Job | Command |
    |---|---|
-   | Arabic typography / calligraphy is the point | `/hf-arabic` |
-   | Instagram, Snap, TikTok, X, LinkedIn | `/hf-social` |
-   | Poster, flyer, signage, banner | `/hf-poster` |
-   | Restaurant / café menu, food | `/hf-menu` |
-   | Logo, wordmark, identity system | `/hf-brand` |
-   | Product shot, e-commerce, packshot | `/hf-product` |
-   | Editing an existing image, references, face lock | `/hf-edit` |
+   | Arabic typography / calligraphy is the point | `/rasm-arabic` |
+   | Instagram, Snap, TikTok, X, LinkedIn | `/rasm-social` |
+   | Poster, flyer, signage, banner | `/rasm-poster` |
+   | Restaurant / café menu, food | `/rasm-menu` |
+   | Logo, wordmark, identity system | `/rasm-brand` |
+   | Product shot, e-commerce, packshot | `/rasm-product` |
+   | Editing an existing image, references, face lock | `/rasm-edit` |
 
 2. **Grill.** 2–4 questions via AskUserQuestion, then one confirmation
    follow-up. Never invent Arabic copy — ask for the verbatim string.

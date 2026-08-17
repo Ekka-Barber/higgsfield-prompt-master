@@ -1,13 +1,13 @@
 ---
-name: hf-social
+name: rasm-social
 description: >
   Social media image prompts with correct ratios and safe zones — Instagram,
-  Snapchat, TikTok, X, LinkedIn, YouTube. Arabic-first. Use for /hf-social,
+  Snapchat, TikTok, X, LinkedIn, YouTube. Arabic-first. Use for /rasm-social,
   "ستوري", "بوست انستقرام", "سناب", "تيك توك", "instagram post", "story",
   "reel cover", "youtube thumbnail", "linkedin banner".
 ---
 
-# /hf-social — social formats, safe zones, Arabic-first
+# /rasm-social — social formats, safe zones, Arabic-first
 
 Social kills designs by cropping them. This command gets the ratio and the
 **safe zone** right before anything else.

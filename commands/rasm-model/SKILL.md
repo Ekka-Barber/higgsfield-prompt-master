@@ -1,13 +1,13 @@
 ---
-name: hf-model
+name: rasm-model
 description: >
   Choose between GPT Image 2 and Nano Banana Pro, and validate output sizes
-  against each model's real API limits. Use for /hf-model, "أي موديل", "وش
+  against each model's real API limits. Use for /rasm-model, "أي موديل", "وش
   أستخدم", "which model", "gpt image or nano banana", "model comparison",
   "what size", "aspect ratio", "is this size valid", "image dimensions".
 ---
 
-# /hf-model — pick the model, validate the size
+# /rasm-model — pick the model, validate the size
 
 Read `../_shared/model-routing.md` for the full table. This command applies it
 and checks sizes.

@@ -1,190 +1,286 @@
-# Higgsfield Prompt Master
+<div align="center">
 
-> GPT Image 2 / Nano Banana Pro prompt reference & generation engine — built from **7,613 real prompts** scraped from youmind.com.
+# رسم · Rasm
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Prompts](https://img.shields.io/badge/corpus-7%2C613%20prompts-green)](#corpus)
-[![Categories](https://img.shields.io/badge/categories-26-orange)](#categories)
+**Arabic-first prompt engineering for AI image models**
+
+*rasm* (رسم) — *drawing, design.* Literally what it makes.
+
+[![tests](https://img.shields.io/badge/tests-156%20passing-2ea44f?style=flat-square)](#testing)
+[![corpus](https://img.shields.io/badge/corpus-7%2C315%20prompts-1B4332?style=flat-square)](#the-corpus)
+[![models](https://img.shields.io/badge/models-GPT%20Image%202%20·%20Nano%20Banana%20Pro-4A5568?style=flat-square)](#model-routing)
+[![python](https://img.shields.io/badge/python-3.10+%20·%20stdlib%20only-3776AB?style=flat-square)](#requirements)
+[![license](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
+
+**12 specialist slash-commands · 9 AI agents · zero dependencies**
+
+</div>
+
+---
 
 ## What this is
 
-A stdlib-only Python engine that retrieves, scores, and generates image-generation prompts:
+Most AI image prompts fail the same way: they describe a subject and stop. Rasm
+turns a vague ask into a specification — by interrogating you, grounding the
+result in a corpus of 7,315 real prompts, and routing to the model that will
+actually render it.
 
-1. **Corpus** — 7,613 scraped prompts in a SQLite DB with an FTS5 full-text index. 6,337 curated rows are searchable by default; 1,276 harvested rows become searchable after running the migration scripts (see [Maintenance](#maintenance)).
-2. **Retrieval** — FTS5 search with quote-safe sanitization and 3-strategy progressive fallback, plus filtered `search()`.
-3. **Generation** — retrieves goal-relevant exemplars, extracts a prompt IR (`ir.py`), fills slots from your goal + intelligence layers, and renders model-native prose (`renderers.py`).
-4. **Quality scoring** — PQS 6-factor weighted score (`pqs.py`), graded as percentiles against the corpus distribution (`pqs_calibration.json`).
-5. **Model routing** — exactly two targets: `gpt-image-2` and `gemini-3-pro-image` (Nano Banana Pro).
+It is **Arabic-first**. Not translated-English-with-Arabic-bolted-on: it knows
+that models render Arabic glyphs correctly and *still lay the page out
+left-to-right*, that Arabic letters take four contextual forms, that Arabic
+justifies by stretching letters rather than spaces, and that a diacritic at
+small size is a coin flip. English is fully supported — it just isn't the
+default.
 
-Works standalone or as an agent skill (copy the repo anywhere; nothing is installed).
-
-## Requirements
-
-- **Python 3.10+** — standard library only, no pip dependencies, no `requirements.txt`.
-- The corpus DB at `references/gpt-image2-prompts-full.db` (~55 MB, gitignored). It ships with the working tree you obtained; if missing, point `HIGGSFIELD_DB` at a copy or run `python scripts/fetch-db.py` (downloads the pinned GitHub Release asset and SHA-256-verifies it against the committed `references/checksums.txt`).
-
-> Note: this repo is **not** an importable Python package (the directory name is hyphenated). `import higgsfield_prompt` resolves to the module `higgsfield_prompt.py` once the repo root is on `sys.path`. There is deliberately no `__init__.py`; the version lives only in `SKILL.md` frontmatter.
-
-### Database path resolution
-
-`HiggsfieldPromptMaster()` locates the corpus in this order (first existing file wins; a missing DB raises `FileNotFoundError` listing every candidate — it never silently creates one):
-
-1. `HIGGSFIELD_DB` env var — explicit override (must exist; no fallback if it doesn't).
-2. `<repo root>/references/gpt-image2-prompts-full.db` — relative to `higgsfield_prompt.py`.
-3. Legacy skill locations: `~/.hermes/skills/higgsfield-prompt-master/references/…`, then `~/.agents/skills/higgsfield-prompt-master/references/…`.
-
-Reads open the DB via a read-only URI (`file:…?mode=ro`); only `enrich_all()` reopens read-write.
-
-## Usage
-
-Run everything from the repo root.
-
-### Search the corpus
-
-```python
-from higgsfield_prompt import HiggsfieldPromptMaster
-
-hpm = HiggsfieldPromptMaster()
-
-# Filtered search (query terms OR'd across title/description/prompt_text)
-for p in hpm.search("minimalist product photography", limit=5):
-    print(f"[{p.id}] {p.title} ({p.structure_type}, {p.length_chars} chars)")
-
-# Full-text search (FTS5, quote-safe, progressive fallback)
-hits = hpm.fts_search("dashboard glassmorphism", limit=10)
-
-# Filters: category / model / structure / techniques
-ui = hpm.search(category="App / Web Design", structure="JSON", limit=5)
-cam = hpm.search(techniques=["Camera Specs", "Lighting details"], limit=5)
+```
+اعمل لي بوستر لافتتاح مقهى
+        │
+        ▼
+  ┌───────────────┐   2-4 questions, then one confirmation follow-up
+  │   THE GRILL   │   never invents your Arabic copy
+  └───────┬───────┘
+          ▼
+  ┌───────────────┐   7,315 exemplars — borrows STRUCTURE, never subject
+  │   RETRIEVAL   │   scrubs the donor's brand out of your prompt
+  └───────┬───────┘
+          ▼
+  ┌───────────────┐   Arabic text → GPT Image 2 (vector glyph pathway)
+  │    ROUTING    │   references/mood → Nano Banana Pro
+  └───────┬───────┘
+          ▼
+  ┌───────────────┐   RTL clause · letter-shaping clause · verbatim text
+  │    RENDER     │   validated size · proofing checklist
+  └───────────────┘
 ```
 
-`search()` / `fts_search()` return `Prompt` dataclass objects (`id`, `title`, `description`, `prompt_text`, `categories`, `model`, `slug`, `structure_type`, `length_chars`, `techniques`).
+---
 
-### Generate a prompt
-
-```python
-from higgsfield_prompt import HiggsfieldPromptMaster
-
-hpm = HiggsfieldPromptMaster()
-result = hpm.generate_prompt(
-    goal="Premium skincare serum product shot",
-    category="Product Marketing",   # drives photo + marketing intelligence
-    structure="Template",           # biases exemplar selection only
-    style="Clean, clinical, premium",
-    aspect_ratio="4:5",             # auto-detected from marketing layer if omitted
-)
-
-result["prompt"]               # the rendered prompt text
-result["model_recommendation"] # {"id": "gpt_image_2"|"nano_banana_pro", "model_id": ..., "display_name": ..., "signal": ...}
-result["quality_score"]        # PQS dict: {"total": float, "grade": "A+".."F", ...}
-result["source_prompt_ids"]    # real corpus IDs used as retrieval evidence
-result["aspect_ratio"], result["length"], result["intelligence"]
-```
-
-Pipeline: goal-relevant FTS retrieval → IR extraction + donor merge (`ir.py`) → slot fill (goal lead, style, mood, aspect ratio, photo/marketing layers; camera fragments scrubbed for non-photo categories) → model-native rendering (`render_gpt_image_2` / `render_nano_banana_pro`) → PQS scoring.
-
-### Analytics
-
-```python
-hpm.stats()                                  # corpus-wide counts
-hpm.category_guide("App / Web Design")       # structure/technique/length deep-dive
-hpm.compare_models("GPT Image 2", "Nano Banana")
-hpm.random_prompt(category="Comic / Storyboard")
-```
-
-Module-level convenience wrappers (`search_prompts`, `get_templates`, `analyze_patterns`, `generate_prompt`, `random_prompt`) and a CLI (`python higgsfield_prompt.py stats|search|guide|generate|random|enrich`) also exist.
-
-### Run the demo
+## Quick start
 
 ```bash
-python demo.py
+git clone https://github.com/Ekka-Barber/rasm.git && cd rasm
 ```
 
-## Corpus
-
-| Metric | Value |
-|---|---|
-| Total rows | **7,613** |
-| Searchable (curated) | 6,337 — the other 1,276 harvested rows unlock via `scripts/migrate_status.py` + `scripts/rebuild_corpus.py` |
-| GPT Image 2 | 5,008 (79.0% of searchable) |
-| Nano Banana | 1,329 (21.0%) |
-| Categories | 26 |
-| Structures | Template 4,846 · JSON 636 · Other 606 · Flat prose 249 |
-| Avg prompt length | ~1,457 chars |
-| ID range | 13,440 – 28,686 |
-
-Counts from `hpm.stats()` on the shipped DB (legacy schema, searchable = `has_prompt = 1`). English-only: 2,240 non-English prompts were removed after analysis showed zero unique value ([`references/non-english-analysis.md`](references/non-english-analysis.md)).
-
-## Categories
-
-Top categories by searchable prompt count: Social Media Post (1,978) · Product Marketing (1,230) · Poster / Flyer (799) · Profile / Avatar (658) · Comic / Storyboard (570) · Game Asset (450) · Infographic / Edu Visual (318) · App / Web Design (133) — plus 18 more (full list in [`references/gpt-image2-categories.json`](references/gpt-image2-categories.json)). Category deep-dive guides live in [`references/`](references/).
-
-## Architecture
-
-```
-higgsfield_prompt.py    # engine: read-only DB open, search/FTS, generation pipeline, model routing, CLI
-ir.py                   # prompt intermediate representation + extract_ir (JSON/template/prose parsers)
-renderers.py            # render_gpt_image_2 / render_nano_banana_pro prose renderers
-pqs.py                  # 6-factor prompt quality scorer (+ pqs_calibration.json percentiles)
-intelligence.py         # loader/accessors for the intelligence layers below
-data/                   # editable intelligence JSON (photography, marketing, art direction, gpt_image_2, nano_banana_pro; claims source-cited)
-                        # plus categories.json — the category registry (canonical names, aliases, photo/marketing routing)
-profiles/               # versioned capability profiles (gpt-image-2@<date>.yaml, nano-banana-pro@<date>.yaml) — source of truth for the model claim JSONs; sync via scripts/sync_profiles.py
-demo.py                 # runnable tour
-scripts/                # scraper, corpus maintenance, regression tests, diversity gate
-references/             # corpus DB, category guides, scraping + analysis write-ups
-research/               # SOURCE_TRUTH.md knowledge base the v2 rebuild was verified against
-```
-
-## Maintenance
-
-```bash
-# Re-scrape new prompts (RSC flight-data extractor, no browser)
-python scripts/rsc-prompt-extractor.py --start 27000 --end 30000
-
-# All maintenance scripts are copy-safe by default; add --apply to touch the live DB
-python scripts/purge_boilerplate.py   # remove share-widget garbage + exact duplicates
-python scripts/migrate_status.py      # add status column; harvested rows become searchable
-python scripts/rebuild_corpus.py      # enrich all rows + FTS rebuild + VACUUM
-
-# Gates — run after any pipeline change
-python scripts/verify-generation-diversity.py   # diversity + duplication regression gate
-python demo.py
-```
-
-## Reproducible build
-
-The corpus DB is rebuildable from the scraped JSONL export — no binary blob is
-required to reproduce it. The 55 MB DB and the JSONL export are **distributed
-via [GitHub Releases](https://github.com/USER/higgsfield-prompt-master/releases)
-only** (both are gitignored); the build script reproduces the DB from committed
-code either way.
-
-```bash
-# 1. Export the live DB to the JSONL export (the Releases artifact)
-python scripts/build-db.py --export          # -> references/gpt-image2-prompts.jsonl
-
-# 2. Rebuild: create schema -> ingest JSONL -> enrich -> FTS rebuild -> VACUUM
-#    -> checksum report + stats-parity gate (row ids, category/model/structure
-#    counts vs the JSONL). Copy-safe: builds to a temp DB, live DB untouched.
-python scripts/build-db.py
-
-# Replace the live DB with a verified rebuild (previous copy kept as *.db.bak)
-python scripts/build-db.py --apply
-```
-
-The rebuild is byte-deterministic (same JSONL + same code → same DB sha256) and
-prints the DB sha256, JSONL sha256, and a row-content digest — compare the JSONL
-sha256 against the published Releases checksum to verify an export's authenticity.
-
-Installers can fetch the pinned release DB directly (refuses on any SHA-256
-mismatch against `references/checksums.txt`; `--tag` overrides the default pin):
+Fetch the corpus (57 MB → 30 MB, distributed via Releases, not git):
 
 ```bash
 python scripts/fetch-db.py
 ```
 
-## License
+Install into every AI agent on your machine:
 
-MIT — see [`LICENSE`](LICENSE). The prompt corpus is scraped from publicly accessible web pages and is provided for research and educational purposes.
+```bash
+python scripts/install-global.py
+```
+
+Then, in any agent:
+
+```
+/rasm-help
+```
+
+That's it. No pip install, no API key, no dependencies — the whole engine is
+Python standard library.
+
+---
+
+## The 12 commands
+
+| Command | For |
+|---|---|
+| **`/rasm`** | Start here. Grills, routes, generates. |
+| **`/rasm-arabic`** | When the Arabic lettering *is* the design — calligraphy, wordmarks, RTL typography |
+| **`/rasm-brief`** | Interrogation only. Produces a locked spec, no prompt |
+| **`/rasm-social`** | Instagram, Snapchat, TikTok, X, LinkedIn, YouTube — ratios and safe zones |
+| **`/rasm-poster`** | Posters, flyers, banners, signage, event announcements |
+| **`/rasm-menu`** | Restaurants and cafés — dish photography, menu boards, food styling |
+| **`/rasm-brand`** | Logos, Arabic wordmarks, monograms, identity systems |
+| **`/rasm-product`** | Packshots, hero shots, lifestyle, marketplace listings |
+| **`/rasm-edit`** | Edit an existing image — references, face lock, background swap, localisation |
+| **`/rasm-search`** | Explore the corpus for real exemplars |
+| **`/rasm-model`** | Which model, and is my size valid? |
+| **`/rasm-help`** | The index |
+
+Full walkthrough with worked examples → **[docs/USAGE.md](docs/USAGE.md)**
+
+---
+
+## What makes it Arabic-first
+
+Six things a generic prompt tool doesn't know.
+
+**1 · The RTL layout trap.** Models render Arabic *glyphs* correctly and then
+lay the *page* out left-to-right anyway — logo top-left, ragged-left text,
+arrows pointing the wrong way. Every Arabic prompt carries an explicit RTL
+clause because the model will not infer it.
+
+**2 · Letter shaping.** Arabic is cursive; each letter takes up to four
+contextual forms (isolated, initial, medial, final) and neighbours join. The
+documented failures are broken connections and scrambled dots on ب/ت/ث.
+
+**3 · Kashida.** Arabic justifies by elongating the connecting stroke *inside*
+a word — not by widening word spaces. A model that stretches Arabic spacing
+produces something a native reader clocks instantly.
+
+**4 · Tashkeel economics.** Every diacritic is another error surface: full
+tashkeel at small sizes in dense paragraphs runs **~1 glyph error in 20**, even
+on the best model. Omitted by default, and the reason is stated.
+
+**5 · Script styles beat font names.** Naming a font barely works — research
+finds typographic intent is *"often ignored or only weakly reflected."* But
+**Kufi, Naskh, Thuluth, Diwani, Ruqʿah** are script *categories*, densely
+present in training data, and they work.
+
+**6 · Numerals are a decision.** Western `0-9` (Gulf commercial) vs Arabic-Indic
+`٠-٩` (traditional). Mixed in one design, it reads as a mistake. Never guessed
+on a menu, price, or date.
+
+Plus the part most tools skip: **sacred content is never rendered by a model.**
+Qur'anic text, the shahada, and the Saudi flag get the artwork-without-text
+treatment, because an AI letter error in sacred text isn't a quality bug.
+
+---
+
+## Model routing
+
+Two targets, one decision, first match wins.
+
+| | **GPT Image 2** | **Nano Banana Pro** |
+|---|---|---|
+| id | `gpt-image-2` | `gemini-3-pro-image` |
+| **Arabic text** | **~99% char accuracy** | ~94%, spacing errors |
+| Exact counts, spatial control | ✅ | reorganises for balance |
+| Reference compositing | text wins conflicts | **image wins — up to 6 obj / 5 chars** |
+| Mood from a thin brief | flat, centred | **composes with opinion** |
+| Reads your brief | literally, clause by clause | holistically, for intent |
+
+**Arabic text-in-image → GPT Image 2.** It composes glyphs as *vector shapes*
+through a dedicated typographic pathway rather than inferring letterforms
+during diffusion, so contextual shaping is structural rather than lucky.
+
+> **This was corrected.** Rasm originally routed Arabic to Nano Banana Pro,
+> reasoning that Google documents `ar-EG` support while OpenAI's docs never
+> mention Arabic. That is an argument from silence, and it was wrong. Tested
+> behaviour beats absent documentation. The correction is recorded in
+> [`commands/_shared/arabic-rules.md`](commands/_shared/arabic-rules.md) rather
+> than quietly rewritten.
+
+### Universal rules
+
+- **Negative prompts do not exist.** Not on GPT Image 2, not on Nano Banana Pro,
+  not on FLUX — all three vendors say so. Negation often *summons* the thing.
+  Describe the positive state: not `"no cars"` → `"an empty, deserted street"`.
+- **Never `REFERENCE_0`.** Address inputs by ordinal and role.
+- **No booster tokens.** `masterpiece, 8k, trending on artstation` is
+  Stable-Diffusion-era noise.
+- **60–120 words** is the sweet spot; never put a critical detail last.
+
+---
+
+## The corpus
+
+| | |
+|---|---|
+| Searchable prompts | **7,315** |
+| Curated master prompts | 62 |
+| Categories | 18 |
+| Database | 30.7 MB SQLite + FTS5 |
+
+Retrieval borrows **structure** — zone schemas, element counts, framing
+conventions — and never subject matter. A fitness-app template teaches layout;
+it must not put *"PulseFit"* or *"calories burned"* into your restaurant poster.
+That scrubbing is enforced in code and covered by tests.
+
+```bash
+python cli.py search "glassmorphism dashboard" --limit 5
+python cli.py guide "Poster / Flyer"
+python cli.py generate "cafe opening poster" "Poster / Flyer" --json
+python cli.py stats
+```
+
+---
+
+## Quality scoring
+
+Every generated prompt is scored by **PQS** — six factors combined with a
+*geometric* mean, so one failed dimension can't be masked by the others:
+
+`coverage · specificity · atomic density · non-redundancy · goal fidelity · − penalty`
+
+Goal fidelity carries the heaviest weight, because it is the only factor that
+notices when a generator ignores its input. Grades are percentiles against the
+generator's own output distribution — not hardcoded cutoffs.
+
+```
+'x'                                     10  D   0.0
+'moody cinematic portrait'              84  C   41.7
+'analytics dashboard, 4 KPI cards'      73  A   75.0
+'luxury watch hero shot'                92  A+  91.7
+```
+
+The release gate is **cross-goal discrimination**: does each prompt match *its
+own* goal better than someone else's? Currently **0.862** against a 0.30 target.
+
+---
+
+## How it stays in sync across 9 agents
+
+`install-global.py` links — never copies. Copies drift, and a missed copy means
+an agent silently runs yesterday's rules.
+
+| Shape | Agents | Mechanism |
+|---|---|---|
+| Directory | `.agents` `.claude` `.codex` `.cursor` `.hermes` `.gemini`×2 | junction / symlink |
+| Flat file | **opencode** | hard link — one inode |
+| Flat file | **zcode** | generated pointer, nothing duplicated |
+
+**A commit here is a release to every agent.** Idempotent, never clobbers a
+hand-installed directory, prunes links from previous names, and has `--dry-run`.
+
+---
+
+## Requirements
+
+Python **3.10+**. That's the whole list — `sqlite3`, `re`, `json`, `pathlib`
+from the standard library. No torch, no transformers, no API keys, no network
+calls at runtime.
+
+Optional: `pytest` to run the suite.
+
+## Testing
+
+```bash
+python -m pytest -q                              # 156 tests
+python scripts/verify-generation-diversity.py    # release gate
+```
+
+## Evidence policy
+
+Every model claim carries `_source`, `_date`, and `_confidence`. Claims from
+vendor documentation are marked separately from practitioner testing and from
+corpus statistics — because **corpus frequency is not evidence that a technique
+works.** It measures what people posted to a gallery.
+
+That distinction is the reason this project exists in its current form: an
+earlier version inferred *"JSON prompts are best"* from 54% of the corpus being
+JSON. Vendor docs say otherwise, and Black Forest Labs explicitly instructs
+users to flatten JSON to prose before sending.
+
+Research trail → [`RESEARCH-2026-08.md`](RESEARCH-2026-08.md) ·
+[`research/SOURCE_TRUTH.md`](research/)
+
+## Credits & licence
+
+Corpus harvested from public prompt galleries on youmind.com. Model guidance
+derived from OpenAI, Google and Black Forest Labs documentation plus published
+comparative testing — all cited inline.
+
+Not affiliated with OpenAI, Google, or any model vendor.
+
+MIT — see [LICENSE](LICENSE).
+
+<div align="center">
+
+**صُنع للمصممين العرب** · Built for Arabic designers
+
+</div>

@@ -1,14 +1,14 @@
 ---
-name: hf-edit
+name: rasm-edit
 description: >
   Editing existing images — reference workflows, face/identity preservation,
   style transfer, object removal, background swaps, and translating text inside
-  an image to Arabic. Use for /hf-edit, "عدل الصورة", "غير الخلفية", "احتفظ
+  an image to Arabic. Use for /rasm-edit, "عدل الصورة", "غير الخلفية", "احتفظ
   بالوجه", "edit this image", "change background", "face lock", "style transfer",
   "keep the same person", "translate text in image".
 ---
 
-# /hf-edit — edits, references & identity
+# /rasm-edit — edits, references & identity
 
 Editing has its own grammar. The two rules that matter most are *name every
 reference by ordinal and role*, and *state what must not change*.

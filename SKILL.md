@@ -1,14 +1,24 @@
 --- 
-name: higgsfield-prompt-master
-description: The Ultimate GPT Image 2 Prompt Reference & Generation Tool — built from 7,613 English-only prompts scraped from youmind.com
+name: rasm-engine
+description: "Rasm (رسم) — Arabic-first prompt engineering for AI image models. Corpus-grounded prompt generation for GPT Image 2 and Nano Banana Pro. The /rasm-* commands are the user-facing surface; this is the engine and corpus."
 version: 2.2.0  # single source of truth — the only version declaration in this repo
 category: media
 ---
 
-# Higgsfield Master Prompt Skill
-## The Ultimate GPT Image 2 Prompt Reference & Generation Tool
+# Rasm · رسم — the engine
+## Arabic-first prompt engineering for AI image models
 
-> Built from **7,613** real **English-only** prompts scraped from youmind.com (6,337 original + 1,276 harvested Aug 2026). Non-English prompts (2,240 Japanese/Korean/Arabic) were removed after analysis confirmed they contain zero unique techniques not present in the English corpus.
+> **This is the engine and corpus.** The user-facing surface is the twelve
+> `/rasm-*` commands in `commands/` — start at `/rasm` or `/rasm-help`.
+> See [README.md](README.md) and [docs/USAGE.md](docs/USAGE.md).
+
+> Built from **7,315 searchable** English-only prompts harvested from public
+> galleries on youmind.com, plus 62 curated master prompts. Non-English prompts
+> were removed after analysis found no techniques absent from the English set.
+>
+> The corpus being English is not a limitation for Arabic work: the **prompt**
+> is written in English because both target models handle English instructions
+> best, while the **text rendered inside the image** is Arabic, quoted verbatim.
 
 ---
 

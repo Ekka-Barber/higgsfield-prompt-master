@@ -1,13 +1,13 @@
 ---
-name: hf-brief
+name: rasm-brief
 description: >
   Interrogation-only mode — grills the user into a complete, locked design brief
-  and outputs the spec without generating a prompt. Use for /hf-brief, "اسألني",
+  and outputs the spec without generating a prompt. Use for /rasm-brief, "اسألني",
   "حدد المطلوب", "grill me", "build a brief", "what do you need to know", or when
   a request is too vague to design against.
 ---
 
-# /hf-brief — grill first, spec out, no generation
+# /rasm-brief — grill first, spec out, no generation
 
 Produces a **locked brief**, not a prompt. Use it when the request is vague,
 when several people must agree before work starts, or when the user wants to
@@ -16,9 +16,9 @@ think before generating.
 **Read `../_shared/grill-protocol.md`.** This command is that protocol run to
 completion and stopped at the spec.
 
-## How this differs from `/hf`
+## How this differs from `/rasm`
 
-`/hf` asks the minimum and generates. `/hf-brief` goes deeper — it is allowed
+`/rasm` asks the minimum and generates. `/rasm-brief` goes deeper — it is allowed
 to spend more questions, and it deliberately **stops** at the spec so the user
 can review, edit, or hand it to someone else.
 
@@ -72,7 +72,7 @@ Excluded    No people, no Latin text
 Risks       Headline is 6 words — near the reliable Arabic limit
 ```
 
-Close with: **"Run `/hf` to generate from this brief, or `/hf-arabic` if the
+Close with: **"Run `/rasm` to generate from this brief, or `/rasm-arabic` if the
 lettering is the hero."**
 
 ## Flag risks in the brief, do not bury them

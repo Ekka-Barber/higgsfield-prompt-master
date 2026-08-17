@@ -21,8 +21,8 @@ SPEC.loader.exec_module(ig)
 
 def test_payload_covers_main_skill_and_every_command():
     names = {n for n, _ in ig.payload()}
-    assert "higgsfield-prompt-master" in names
-    for cmd in ("hf", "hf-arabic", "hf-help", "hf-menu", "hf-model"):
+    assert "rasm-engine" in names, "engine skill must install"
+    for cmd in ("rasm", "rasm-arabic", "rasm-help", "rasm-menu", "rasm-model"):
         assert cmd in names, f"{cmd} missing from install payload"
     assert not any(n.startswith("_") for n in names), "_shared must not install"
 
@@ -41,8 +41,8 @@ def test_every_payload_item_has_a_skill_md():
 
 def test_frontmatter_parses_block_scalars():
     """description: > spans lines; the zcode pointer needs it flattened."""
-    fm = ig._frontmatter(REPO / "commands" / "hf-arabic" / "SKILL.md")
-    assert fm.get("name") == "hf-arabic"
+    fm = ig._frontmatter(REPO / "commands" / "rasm-arabic" / "SKILL.md")
+    assert fm.get("name") == "rasm-arabic"
     assert len(fm.get("description", "")) > 80, "block scalar not joined"
     assert "\n" not in fm["description"]
 
@@ -51,9 +51,9 @@ def test_zcode_pointer_references_and_does_not_duplicate(tmp_path):
     """A copy would drift; the pointer must point, not duplicate."""
     stats = ig.install_flat(tmp_path, "zcode")
     assert stats.get("written"), stats
-    text = (tmp_path / "hf-arabic.md").read_text(encoding="utf-8")
+    text = (tmp_path / "rasm-arabic.md").read_text(encoding="utf-8")
     assert "mode: subagent" in text, "zcode needs mode: subagent"
-    assert str(REPO / "commands" / "hf-arabic" / "SKILL.md") in text
+    assert str(REPO / "commands" / "rasm-arabic" / "SKILL.md") in text
     # The real skill body must NOT be inlined.
     assert "proofing checklist" not in text, "pointer inlined skill content"
     # Re-running is a no-op.
@@ -70,6 +70,6 @@ def test_opencode_hardlink_shares_one_inode(tmp_path):
     """Hard link, not copy -- an edit in the repo must be live immediately."""
     stats = ig.install_flat(tmp_path, "opencode")
     assert stats.get("hardlinked"), stats
-    src = REPO / "commands" / "hf-arabic" / "SKILL.md"
-    assert (tmp_path / "hf-arabic.md").stat().st_ino == src.stat().st_ino
+    src = REPO / "commands" / "rasm-arabic" / "SKILL.md"
+    assert (tmp_path / "rasm-arabic.md").stat().st_ino == src.stat().st_ino
     assert ig.install_flat(tmp_path, "opencode").get("ok"), "not idempotent"

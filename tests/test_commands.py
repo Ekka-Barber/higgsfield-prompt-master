@@ -1,4 +1,4 @@
-"""The /hf-* command skills are valid and internally consistent.
+"""The /rasm-* command skills are valid and internally consistent.
 
 These files are the user-facing surface of the skill, so a broken frontmatter
 block or a dangling reference silently disables a command rather than failing
@@ -11,8 +11,9 @@ import pytest
 
 COMMANDS = Path(__file__).resolve().parent.parent / "commands"
 EXPECTED = {
-    "hf", "hf-arabic", "hf-brief", "hf-social", "hf-poster", "hf-menu",
-    "hf-brand", "hf-product", "hf-edit", "hf-search", "hf-model", "hf-help",
+    "rasm", "rasm-arabic", "rasm-brief", "rasm-social", "rasm-poster",
+    "rasm-menu", "rasm-brand", "rasm-product", "rasm-edit", "rasm-search",
+    "rasm-model", "rasm-help",
 }
 
 
