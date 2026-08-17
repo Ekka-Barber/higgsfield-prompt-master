@@ -9,6 +9,7 @@ Default: copy-safe — operates on a temp copy of the DB (point HIGGSFIELD_DB
 at the printed copy path to use it). Use --apply to modify the live DB.
 """
 import importlib
+import json
 import os
 import shutil
 import sys
@@ -72,8 +73,28 @@ def main():
     strict_parse = true_json + after.get("Template-JSON", 0)
     print(f"true-JSON count: {strict_parse} (JSON {true_json} + Template-JSON "
           f"{after.get('Template-JSON', 0)}; was 636)")
-    assert strict_parse <= 352, f"true-JSON {strict_parse} exceeds 352 cap"
+    # Assert the property, not a snapshot count. The old 352 cap was measured on
+    # the 6,337-row corpus; once the harvested rows became searchable and enriched
+    # the true-JSON population legitimately grows, so a fixed cap gives a false
+    # failure. What must always hold: anything labelled JSON really parses.
+    def _parses(txt):
+        try:
+            json.loads(txt)
+            return True
+        except Exception:
+            return False
+
+    verify = hp.get_conn(readonly=True)
+    mislabelled = [
+        pid for pid, txt in verify.execute(
+            "SELECT id, prompt_text FROM prompts WHERE structure_type='JSON'")
+        if not _parses(txt or "")
+    ]
+    verify.close()
+    assert not mislabelled, (
+        f"{len(mislabelled)} rows labelled JSON do not parse, e.g. {mislabelled[:5]}")
     assert true_json == strict_parse - after.get("Template-JSON", 0)
+    print(f"verified: all {true_json} JSON-labelled rows strict-parse")
     print("OK")
 
 

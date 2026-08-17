@@ -101,8 +101,15 @@ def migrate(db_path):
         print(f"  sample: {pid} {old!r} -> {new!r}")
 
     assert after["json_wrapped"] == 0, "JSON-array categories remain"
-    assert st.get("harvested", 0) == 1276 and harvested_text == 1276, \
-        f"expected 1,276 text-bearing harvested rows, got {harvested_text}"
+    # Invariant, not a magic count: every harvested row must carry text, so the
+    # status flip actually makes real prompts searchable. The absolute number
+    # depends on what ran earlier in the pipeline (purge_boilerplate removes
+    # boilerplate rows from the harvested set too), so pinning it to 1,276 only
+    # holds on a pristine DB and breaks any legitimate ordering.
+    n_harvested_rows = st.get("harvested", 0)
+    assert n_harvested_rows > 0, "no harvested rows found"
+    assert harvested_text == n_harvested_rows, \
+        f"{n_harvested_rows - harvested_text} harvested rows have no text"
     assert st.get("curated", 0) + st.get("harvested", 0) + st.get("excluded", 0) == \
         cur.execute("SELECT COUNT(*) FROM prompts").fetchone()[0]
     conn.close()
