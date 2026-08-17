@@ -65,10 +65,12 @@ class GenerationMixin:
         try:
             from ir import IR_FIELDS, PromptIR, extract_ir
             from renderers import render_gpt_image_2, render_nano_banana_pro, _CAMERA_RE
+            from langcheck import detect_scripts
         except ImportError:  # US-025: packaged layout
             from .ir import IR_FIELDS, PromptIR, extract_ir
             from .renderers import (render_gpt_image_2, render_nano_banana_pro,
                                     _CAMERA_RE)
+            from .langcheck import detect_scripts
 
         # US-025: absolute-then-relative intelligence import; failure is
         # loud (stderr + result dict), never a silent layer drop.
@@ -98,10 +100,34 @@ class GenerationMixin:
         # evidence (templates would leak off-domain fragments — the June
         # 2026 contamination class); category templates only serve as a
         # last-resort primary when FTS finds nothing. ──
-        goal_keywords = self._extract_keywords(goal)
-        similar = self.fts_search(goal_keywords, limit=5) if goal_keywords else []
-        if not similar and goal:
-            similar = self.fts_search(goal[:100], limit=5)
+        # US-033: the corpus is English-only, so a non-Latin goal can never match
+        # via FTS. Left alone it still returns *something* (the same unrelated
+        # exemplar every time) and the user gets a confident, irrelevant prompt.
+        # Translate when a hook is available, otherwise say so out loud.
+        retrieval_goal, scripts = goal, detect_scripts(goal)
+        if scripts:
+            translated = self._translate_goal(goal)
+            if translated:
+                retrieval_goal = translated
+                warnings.append(
+                    f"Goal contains {'/'.join(scripts)} text; translated to "
+                    f"English for retrieval: {translated!r}")
+            else:
+                warnings.append(
+                    f"Goal contains {'/'.join(scripts)} text but the corpus is "
+                    "English-only and no translation hook is configured "
+                    "(set HiggsfieldPromptMaster.translate_hook). Retrieval was "
+                    "skipped; output is built from category guidance only and "
+                    "will be generic. Re-run with an English goal for corpus "
+                    "grounding.")
+
+        goal_keywords = self._extract_keywords(retrieval_goal)
+        if scripts and retrieval_goal is goal:
+            similar = []  # untranslated: skip FTS rather than return noise
+        else:
+            similar = self.fts_search(goal_keywords, limit=5) if goal_keywords else []
+            if not similar and retrieval_goal:
+                similar = self.fts_search(retrieval_goal[:100], limit=5)
 
         candidates = similar
         if structure == "Template":
@@ -184,6 +210,25 @@ class GenerationMixin:
             "length": len(prompt_text),
             "warnings": warnings,
         }
+
+    #: Optional callable ``(str) -> str`` translating a goal into English.
+    #: Left unset by default: this package is pure stdlib and offline, so it
+    #: ships no translator rather than pulling in a network dependency. An agent
+    #: that already has a model available should set it, e.g.
+    #:     HiggsfieldPromptMaster.translate_hook = staticmethod(my_translate)
+    #: Returning a falsy value means "could not translate" and the caller warns.
+    translate_hook = None
+
+    def _translate_goal(self, goal: str) -> str:
+        """Best-effort English rendering of a non-Latin goal, or '' if none."""
+        hook = type(self).translate_hook
+        if hook is None:
+            return ""
+        try:
+            return (hook(goal) or "").strip()
+        except Exception as exc:  # a broken hook must not break generation
+            print(f"WARNING: translate_hook failed: {exc}", file=sys.stderr)
+            return ""
 
     def _recommend_model(self, category: str, goal: str, structure: str) -> dict:
         """Route to one of the two real model targets (SOURCE_TRUTH §6)."""
