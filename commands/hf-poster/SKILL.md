@@ -13,6 +13,8 @@ Posters are a **typographic hierarchy** problem before they are an image
 problem. Get the levels right and the rest follows.
 
 Read `../_shared/arabic-rules.md` and `../_shared/model-routing.md`.
+Also read `../_shared/typography.md` — font names are style hints,
+descriptors are the real control.
 
 ## The hierarchy — name every level explicitly
 

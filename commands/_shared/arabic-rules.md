@@ -9,16 +9,32 @@ reproducible community/practitioner reports, **[CRAFT]** design practice.
 
 ## 0. The one-line routing rule
 
-**Arabic text inside an image → Nano Banana Pro (`gemini-3-pro-image`).**
+**Arabic text inside an image → GPT Image 2 (`gpt-image-2`).**
 
-Google officially lists **ar-EG** among the model's best-supported languages, and
-it renders Arabic script with correct contextual letter shapes **[VENDOR]**.
-GPT Image 2's documentation makes no Arabic claim at all. Do not route Arabic
-typography to GPT Image 2 because a layout looks like a "UI job" — text fidelity
-outranks layout precision the moment Arabic is on the canvas.
+GPT Image 2 renders Arabic through a **typographic pathway that composes glyphs
+as vector shapes and rasterises them into the scene**, instead of inferring
+letterforms pixel-by-pixel during diffusion **[TEST]**. Correct contextual
+shaping is therefore structural rather than lucky — which is why it reports
+~99% character-level accuracy against Nano Banana Pro's ~94%, and why
+independent comparisons put it close to a full generation ahead on RTL work.
+Nano Banana Pro shows Arabic **character-spacing** problems that need manual
+correction before an asset is publish-ready **[TEST]**.
 
-Use GPT Image 2 only when the Arabic is *decorative and unreadable by design*
-(blurred signage in a background plate) or when there is no Arabic text at all.
+> **Correction, 2026-08-17.** An earlier version of this file routed Arabic to
+> Nano Banana Pro because Google documents ar-EG support and OpenAI's docs never
+> mention Arabic. That was an argument from silence, and it was wrong. Absence
+> of a vendor claim is not evidence of weakness. Tested behaviour wins.
+
+**Send Arabic to Nano Banana Pro only when the job is driven by something it
+owns** — reference-image compositing, character consistency across a series, or
+translate-text-in-image localisation — and accept that the Arabic may need a
+typographic pass.
+
+### Known Arabic limits on GPT Image 2 **[TEST]**
+
+- **Full tashkeel at small point sizes in dense paragraphs: ~1 glyph error in
+  20.** Headings, signage and short strings are reliable; diacritised body copy
+  is not. This is the sharpest reason for §3 and §4 below.
 
 ---
 
@@ -79,6 +95,9 @@ immediately visible as wrong to a native reader **[TESTED]**.
 
 - **Default: no tashkeel.** Modern Arabic design overwhelmingly sets text
   undiacritised. Say "no diacritics / undiacritised text".
+- Measured cost of ignoring this: full diacritics at small sizes in dense
+  paragraphs run **~1 glyph error in 20** even on GPT Image 2 **[TEST]**.
+  Diacritics are safe only large and short.
 - **Include only for:** Qur'anic text, classical poetry, children's literacy
   material, or where meaning is genuinely ambiguous.
 - When required, keep the string extremely short and expect to fix it manually.
@@ -139,6 +158,27 @@ Say the *style*, not just "Arabic font" — "geometric Kufi wordmark" produces a
 categorically different result from "Arabic text".
 
 ---
+
+## 6b. Kashida — Arabic justifies by stretching letters, not spaces
+
+Latin text justifies by widening **word spaces**. Arabic justifies with
+**kashida (كشيدة / tatweel)** — elongating the connecting stroke *inside* a word
+at specific joins **[CRAFT]**. A model that stretches Arabic word-spacing to fill
+a line has produced something a native reader clocks instantly as wrong.
+
+When a design needs justified or edge-to-edge Arabic:
+
+> "Justify the Arabic line using kashida elongation of the connecting strokes,
+> not by widening the spaces between words. Keep word spacing even."
+
+Kashida is also a *decorative* device — deliberately extended strokes in
+Thuluth and Diwani for rhythm and grandeur:
+
+> "Extended kashida strokes on the connecting letters for a flowing ceremonial
+> rhythm."
+
+Never apply kashida to Kufi (it is angular and modular, not cursive-stretched),
+and never stretch a letter that does not take a connecting stroke.
 
 ## 7. Numerals — pick a system
 

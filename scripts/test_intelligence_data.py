@@ -48,7 +48,15 @@ assert g2["names"]["latest"] == "gpt-image-2"
 assert nb["names"]["model_id"] == "gemini-3-pro-image"
 g2["names"] = "mutated"
 assert GPT_IMAGE_2["names"]["latest"] == "gpt-image-2"             # top-level shallow copy protects source (nested dicts shared by design, US-005 parity)
-assert len(GPT_IMAGE_2) == 11 and len(NANO_BANANA_PRO) == 12       # section counts unchanged (US-005/006)
+# Assert the sections that must exist, not a frozen count -- the layers are
+# meant to grow as research lands (arabic_and_rtl and fonts were added
+# 2026-08-17), and a hardcoded total turns every addition into a false failure.
+for _section in ("names", "structures", "text_rendering", "exclusions",
+                 "references", "sizes", "params", "mistakes"):
+    assert _section in GPT_IMAGE_2, f"GPT_IMAGE_2 lost section {_section!r}"
+for _section in ("names", "prompting", "references", "text", "ratios", "limits"):
+    assert _section in NANO_BANANA_PRO, f"NANO_BANANA_PRO lost section {_section!r}"
+assert len(GPT_IMAGE_2) >= 11 and len(NANO_BANANA_PRO) >= 12
 print("accessor parity OK: sentinel, goal precedence, shallow copies, 11+12 sections")
 
 # 3. Gate can fail: tampered claim group must raise

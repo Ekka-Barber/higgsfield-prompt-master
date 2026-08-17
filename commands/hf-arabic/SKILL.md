@@ -14,13 +14,25 @@ description: >
 The flagship. Use when the Arabic lettering *is* the design, not a caption on it.
 
 **Read `../_shared/arabic-rules.md` in full before answering.** This command is
-its applied form.
+its applied form. Also read `../_shared/typography.md` — font *names* are only
+style hints; descriptors and script-style tokens are the real control.
 
-## Always route to Nano Banana Pro
+## Default to GPT Image 2
 
-`gemini-3-pro-image`. Google lists **ar-EG** among its best languages and it
-produces correct contextual letter shapes. GPT Image 2 makes no Arabic claim.
-This holds even when the layout looks like a "UI job".
+`gpt-image-2`. It builds Arabic through a **typographic pathway that composes
+glyphs as vector shapes** before rasterising them, rather than inferring
+letterforms during diffusion — so contextual shaping is structural. ~99%
+character accuracy vs Nano Banana Pro's ~94%, and roughly a generation ahead on
+RTL in independent comparisons. Nano Banana Pro shows Arabic character-spacing
+errors that need fixing by hand.
+
+**Switch to Nano Banana Pro** (`gemini-3-pro-image`) only when the job is really
+a *reference* job — compositing from supplied images, character consistency
+across a series, or translate-text-in-image — and expect to typographically
+proof the Arabic afterwards.
+
+**The one place GPT Image 2 still fails:** full tashkeel at small sizes in dense
+paragraphs, ~1 glyph error in 20. Keep diacritised text large and short.
 
 ## Grill — Arabic-specific
 

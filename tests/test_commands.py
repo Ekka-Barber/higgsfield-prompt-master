@@ -80,11 +80,38 @@ def test_shared_rules_exist():
         assert (COMMANDS / "_shared" / name).exists(), f"missing shared/{name}"
 
 
-def test_arabic_routes_to_nano_banana_pro():
-    """The central Arabic decision must be stated in the shared rules."""
+def test_arabic_routes_to_gpt_image_2():
+    """Arabic text-in-image routes to gpt-image-2.
+
+    Corrected 2026-08-17. The first version of this rule sent Arabic to Nano
+    Banana Pro because Google documents ar-EG support while OpenAI's docs never
+    mention Arabic -- an argument from silence. Testing shows gpt-image-2
+    composes glyphs as vector shapes through a typographic pathway, giving ~99%
+    character accuracy vs ~94%, and roughly a generation lead on RTL.
+    """
     rules = (COMMANDS / "_shared" / "arabic-rules.md").read_text(encoding="utf-8")
-    assert "gemini-3-pro-image" in rules
-    assert "ar-EG" in rules, "the ar-EG support claim is the basis for routing"
+    routing = (COMMANDS / "_shared" / "model-routing.md").read_text(encoding="utf-8")
+    head = rules.split("## 1.")[0]
+    assert "gpt-image-2" in head, "Arabic routing rule must name gpt-image-2"
+    assert "vector" in head.lower(), "state WHY: the vector typographic pathway"
+    assert "gpt-image-2" in routing.split("2. **Reference")[0], (
+        "routing rule 1 must send Arabic to gpt-image-2")
+
+
+def test_nano_banana_still_owns_reference_work():
+    """The correction must not erase Nano Banana Pro's genuine strengths."""
+    routing = (COMMANDS / "_shared" / "model-routing.md").read_text(encoding="utf-8")
+    assert "gemini-3-pro-image" in routing
+    for strength in ("character consistency", "localisation"):
+        assert strength.lower() in routing.lower(), (
+            f"Nano Banana Pro's {strength} strength was lost in the correction")
+
+
+def test_tashkeel_limit_is_recorded():
+    """The one documented Arabic failure on gpt-image-2 must stay visible."""
+    rules = (COMMANDS / "_shared" / "arabic-rules.md").read_text(encoding="utf-8")
+    assert "1 glyph error in 20" in rules, (
+        "the diacritics-at-small-size limit is the reason for the tashkeel rule")
 
 
 def test_negative_prompts_are_disavowed_in_routing():

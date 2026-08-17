@@ -10,7 +10,9 @@ description: >
 # /hf-brand — logos, wordmarks & identity
 
 Read `../_shared/arabic-rules.md` first — an Arabic wordmark is a letterform
-problem, and this is where letter shaping matters most.
+problem, and this is where letter shaping matters most. Also read
+`../_shared/typography.md`: font *names* are style hints, not specifications —
+which is exactly why a rendered logo is a concept, never a deliverable.
 
 ## Set expectations honestly, up front
 

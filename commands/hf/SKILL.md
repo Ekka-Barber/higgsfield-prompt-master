@@ -19,6 +19,7 @@ output, or explicitly says "in English" / "بالإنجليزي".
 ## Read first
 
 - `../_shared/arabic-rules.md` — RTL trap, letter shaping, script styles, care
+- `../_shared/typography.md` — fonts: names are hints, descriptors are controls
 - `../_shared/model-routing.md` — the two models and the decision order
 - `../_shared/grill-protocol.md` — how to interrogate
 

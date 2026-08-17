@@ -13,6 +13,8 @@ Social kills designs by cropping them. This command gets the ratio and the
 **safe zone** right before anything else.
 
 Read `../_shared/arabic-rules.md` and `../_shared/model-routing.md`.
+Also read `../_shared/typography.md` — font names are style hints,
+descriptors are the real control.
 
 ## Formats
 

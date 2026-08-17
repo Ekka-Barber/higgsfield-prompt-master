@@ -14,15 +14,20 @@ routed model and its exact model id in its output.
 
 Evaluate top to bottom. **First match wins.**
 
-1. **Any readable Arabic (or other non-Latin) text in the image → Nano Banana Pro.**
-   Google officially lists ar-EG among its best languages and it produces
-   correct contextual letter shapes [VENDOR]. GPT Image 2 claims no Arabic
-   support. This rule outranks every other consideration below.
+1. **Any readable Arabic (or other non-Latin) text in the image → GPT Image 2.**
+   It composes glyphs as **vector shapes** through a dedicated typographic
+   pathway rather than inferring letterforms during diffusion, giving ~99%
+   character accuracy vs Nano Banana Pro's ~94%, and independent comparisons put
+   it roughly a generation ahead on RTL. Nano Banana Pro shows Arabic
+   character-spacing errors needing manual fixes [TEST].
+   *Exception:* full tashkeel at small sizes in dense paragraphs still runs ~1
+   glyph error in 20 — keep diacritised text large and short.
 2. **Reference images / compositing / character consistency → Nano Banana Pro.**
    Typed reference slots: up to 6 objects, 5 characters, 3 style refs (Pro).
-   It weights the reference image over the text when they conflict.
-3. **Translate-text-in-image / localisation → Nano Banana Pro.** This is a
-   documented strength.
+   It weights the reference image over the text when they conflict. This
+   outranks rule 1 — accept a typographic pass on any Arabic.
+3. **Translate-text-in-image / localisation → Nano Banana Pro.** A documented
+   strength; same caveat as rule 2.
 4. **Exact element counts and precise spatial arrangement → GPT Image 2.**
    "Exactly 6 nav items", "4 cards in a grid". More literal about enumerated
    instructions. Neither model is dependable much past five.
@@ -32,7 +37,9 @@ Evaluate top to bottom. **First match wins.**
    a reference more tightly; use it when geometry must survive.
 7. **Mood-led, atmospheric, colour-led work → Nano Banana Pro.** It composes
    with more opinion from a thinner brief.
-8. **Default for this skill → Nano Banana Pro** (Arabic-first).
+8. **Default for this skill → GPT Image 2** (Arabic-first, and Arabic text is
+   its strongest suit). Reach for Nano Banana Pro when the brief is a *mood* or
+   a *reference* rather than a *specification*.
 
 ---
 
