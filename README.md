@@ -58,7 +58,7 @@ default.
 ## Quick start
 
 ```bash
-git clone https://github.com/Ekka-Barber/rasm.git && cd rasm
+git clone https://github.com/Ekka-Barber/higgsfield-prompt-master.git && cd higgsfield-prompt-master
 ```
 
 Fetch the corpus (57 MB → 30 MB, distributed via Releases, not git):
