@@ -278,6 +278,13 @@ def main():
         return 1
 
     items = payload()
+    # Every SKILL.md opens by reading ../_shared/*.md. That directory holds no
+    # SKILL.md of its own, so payload() filters it out (leading underscore) and
+    # flat agents get it via an absolute path instead. Directory agents resolve
+    # the ../ literally, so it has to sit beside the skills or every one of
+    # those reads dangles silently.
+    shared = COMMANDS / "_shared"
+    dir_items = items + ([("_shared", shared)] if shared.is_dir() else [])
     print(f"Linking {len(items)} skill(s) into {len(roots)} agent director(ies) "
           f"on {platform.system()}\n")
 
@@ -285,7 +292,7 @@ def main():
     for root in roots:
         pruned = prune_legacy(root, flat=False, dry_run=args.dry_run)
         statuses = []
-        for name, src in items:
+        for name, src in dir_items:
             st = link(src, root / name, dry_run=args.dry_run)
             statuses.append(st)
             totals[st] = totals.get(st, 0) + 1
