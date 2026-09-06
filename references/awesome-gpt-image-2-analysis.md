@@ -2,7 +2,7 @@
 
 **Source:** https://github.com/YouMind-OpenLab/awesome-gpt-image-2
 **Gallery:** https://youmind.com/gpt-image-2-prompts
-**Stats (as of 2026-09-04):** 16,795 prompts, 9,740 stars, 880 forks (growing ~70-120 prompts and ~10-20 stars per day)
+**Stats (as of 2026-09-06):** 16,931 prompts, 9,758 stars, 881 forks (growing ~60-120 prompts and ~10-20 stars per day)
 **Update cadence:** Every 4 hours via GitHub Actions (bot auto-commits `docs: auto-update README [skip ci]` — these are noise from CMS syncs, not real technique changes)
 **License:** CC BY 4.0
 **Public README:** 120 curated prompts with full text (capped by GitHub content-length limits); remaining 15,950+ behind private Payload CMS but **fully accessible** via youmind.com gallery pages at predictable URLs: `https://youmind.com/prompts/{any-slug}-{ID}`. GPT Image 2 prompts are at IDs ~13440–26917. See `references/gpt-image2-prompt-database.md` for scraping approach and scripts.
@@ -278,6 +278,18 @@ A split-frame photo-transform family (top ~43-58% photo preserved — split-fram
 Why it works: unlike Fixed-Anchor series contracts (#25) where everything is pinned, this delegates *content selection* to the model while pinning *slot structure* (exactly N uniform panels, percentage zones) — the anti-fabrication clause ("no unrelated structures added out of thin air") keeps the adaptation honest. The compression contract inverts the usual detail-maximizing instinct: mandating *minimum viable recognition* defeats the model's tendency to over-render reference transforms. Use for travel/field-journal posters, logo/stamp extraction from photos, and any photo → distillation study.
 
 Related same-cycle observations (already covered, not promoted): No. 76 "Poetic Wave of Departure Portrait" (Sep 3, Michael H. Lester) is an extreme ultra-minimal data point — the *entire prompt is a 5-line free-verse poem* ("in a rush / to get to her next stop / she departs / with a wave of her hand / and a throaty toodle-oo") — confirming technique #20's floor: poetic free verse works as a prompt form for low-intensity aesthetic images. No. 77 "Infrared Police Backseat Footage" (Sep 3) = Face Lock + Source-Look Preservation (#21) + exact-count overlay labels applied to surveillance-cam transformation.
+
+### 39. Input-Conditional Fallback Clauses (new, observed in No. 76 "Multi-Angle Scene Reconstruction Grid" by M. Asif, Sep 4 2026)
+A grid-of-shots prompt that branches explicitly on the *content of the input photo*, so one template survives any upload:
+- **Core job:** "Using the attached image as the single source of truth, create ONE image that is a clean 3-column by 2-row grid of six photographs of the EXACT same scene, captured from six different camera positions, as if six cameras were placed around the room at the same instant." — a Multi-Angle variant of turnaround sheets, but scene-level (room + people + props), not character-level.
+- **Scene lock:** "Lock everything from the attached image: the same people with the same faces, hair, skin tone, glasses, clothing and body proportions; the same furniture, props, walls, signage with the same text, lighting setup and color grade; the same time of day. Nothing is added, removed, or rearranged — only the camera position, lens and framing change between panels."
+- **Per-panel lens spec:** each of the 6 panels names camera position + focal length + aperture (wide master 35mm; ceiling top-down 24mm; over-the-shoulder left 50mm f/2.0; reverse OTS right 50mm f/2.0; low-angle 28mm; tight close-up 85mm f/1.8 shallow DoF).
+- **The novel mechanic — conditional fallbacks:** "If the scene contains only one person, apply the over-the-shoulder panels as a three-quarter side angle from the left and from the right of that person instead. If the scene contains no people, treat the main object or furniture group as the subject for panels 3, 4 and 6."
+- **Grid rules closer:** equal panels, thin white gutters, no labels/numbers/captions, identical white balance/exposure/color grade/film grain across panels, consistent lighting direction.
+
+Why it works: grid/turnaround templates normally break when the input doesn't match the assumed subject count; enumerating input-conditional branches keeps the template total (works on any photo) instead of average. Generalizes to any reference-based template: write the happy path, then "if [input condition], do [adaptation] instead" clauses for the common input shapes. Use for multi-angle coverage, virtual camera-array shots, and reusable client-facing templates that must survive arbitrary uploads.
+
+Also observed this cycle: the **`{argument name="..." default="..."}` Raycast slot syntax** is now pervasive across README entries (No. 13, 20, 48, 50, 52, etc.) — inline fill-in slots that make prompts reusable templates. Syntax note only, not a technique; worth using when authoring reusable template prompts.
 
 ## Featured Prompt Patterns (Reusable Templates)
 
