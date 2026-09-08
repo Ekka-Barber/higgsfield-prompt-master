@@ -2,7 +2,7 @@
 
 **Source:** https://github.com/YouMind-OpenLab/awesome-gpt-image-2
 **Gallery:** https://youmind.com/gpt-image-2-prompts
-**Stats (as of 2026-09-07):** 17,019 prompts, 9,767 stars, 880 forks (growing ~60-120 prompts and ~10-20 stars per day)
+**Stats (as of 2026-09-08):** 17,064 prompts, 9,780 stars, 880 forks (growing ~60-120 prompts and ~10-20 stars per day)
 **Update cadence:** Every 4 hours via GitHub Actions (bot auto-commits `docs: auto-update README [skip ci]` — these are noise from CMS syncs, not real technique changes)
 **License:** CC BY 4.0
 **Public README:** 120 curated prompts with full text (capped by GitHub content-length limits); remaining 15,950+ behind private Payload CMS but **fully accessible** via youmind.com gallery pages at predictable URLs: `https://youmind.com/prompts/{any-slug}-{ID}`. GPT Image 2 prompts are at IDs ~13440–26917. See `references/gpt-image2-prompt-database.md` for scraping approach and scripts.
