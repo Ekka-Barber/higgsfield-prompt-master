@@ -1,6 +1,6 @@
 # GPT Image 2 Prompting Techniques
 
-Condensed from [awesome-gpt-image-2](https://github.com/YouMind-OpenLab/awesome-gpt-image-2) (17,148+ prompts, 9.8k stars — updated daily; check `~/.hermes/logs/gpt-image2-repo-state.json` for live counts) plus analysis of the full youmind.com gallery corpus via scraping (see `references/gpt-image2-prompt-database.md`).
+Condensed from [awesome-gpt-image-2](https://github.com/YouMind-OpenLab/awesome-gpt-image-2) (17,311+ prompts, 9.8k stars — updated daily; check `~/.hermes/logs/gpt-image2-repo-state.json` for live counts) plus analysis of the full youmind.com gallery corpus via scraping (see `references/gpt-image2-prompt-database.md`).
 
 **Important corpus finding:** The curated README (120 prompts, capped by GitHub content-length limits) skews toward flat photography prompts (83% flat, 3% JSON). The actual full corpus is **54% JSON-structured** and dominated by UI/UX designs. Weight JSON structure as the primary pattern, not the exception.
 

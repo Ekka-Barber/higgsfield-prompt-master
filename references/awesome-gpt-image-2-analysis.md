@@ -2,7 +2,7 @@
 
 **Source:** https://github.com/YouMind-OpenLab/awesome-gpt-image-2
 **Gallery:** https://youmind.com/gpt-image-2-prompts
-**Stats (as of 2026-09-09):** 17,148 prompts, 9,791 stars, 878 forks (growing ~60-120 prompts and ~10-20 stars per day)
+**Stats (as of 2026-09-10):** 17,311 prompts, 9,813 stars (growing ~60-120 prompts and ~10-20 stars per day)
 **Update cadence:** Every 4 hours via GitHub Actions (bot auto-commits `docs: auto-update README [skip ci]` — these are noise from CMS syncs, not real technique changes)
 **License:** CC BY 4.0
 **Public README:** 120 curated prompts with full text (capped by GitHub content-length limits); remaining 15,950+ behind private Payload CMS but **fully accessible** via youmind.com gallery pages at predictable URLs: `https://youmind.com/prompts/{any-slug}-{ID}`. GPT Image 2 prompts are at IDs ~13440–26917. See `references/gpt-image2-prompt-database.md` for scraping approach and scripts.
@@ -290,6 +290,8 @@ A grid-of-shots prompt that branches explicitly on the *content of the input pho
 Why it works: grid/turnaround templates normally break when the input doesn't match the assumed subject count; enumerating input-conditional branches keeps the template total (works on any photo) instead of average. Generalizes to any reference-based template: write the happy path, then "if [input condition], do [adaptation] instead" clauses for the common input shapes. Use for multi-angle coverage, virtual camera-array shots, and reusable client-facing templates that must survive arbitrary uploads.
 
 Also observed this cycle: the **`{argument name="..." default="..."}` Raycast slot syntax** is now pervasive across README entries (No. 13, 20, 48, 50, 52, etc.) — inline fill-in slots that make prompts reusable templates. Syntax note only, not a technique; worth using when authoring reusable template prompts.
+
+Sep 10 2026 cycle note (17,311 prompts): no new technique promoted. Confirmations of existing catalog from the rotated window — No. 109 "Premium Beverage Advertising Poster" (Loriel.AI, Sep 3) explicitly uses "Orbit visual logic" with a closed eye-loop, independently validating technique #37's terminology entering community vocabulary; No. 113 "Advanced Wardrobe Consistency Rules" (MoodLock_JP, Sep 1) is the Protected Wardrobe Contract (#29) rendered in full Japanese; the labeled side-by-side model-comparison family (#34) expanded to N panels and stacked layouts (No. 15 two-panel stacked, No. 22 three-panel, No. 26 two-panel underwater, No. 82 five-page manga quality ladder "low→max", No. 89 rhode beauty two-panel, No. 114 3D mesh comparison with viewport guide lines); No. 97 "Product Placement Lifestyle Generation" chains style-extraction→reapplication ("analyze this photo and give me a detailed json prompt describing its visual style... using this json as reference, generate...") — a prose variant of Chained Retrieval-Transform Steps (#19) / Pipeline Anchor (#33), noted not promoted; No. 12 ends with a post-generation self-check question ("After generation, check against the original: have you changed the lighting...?") — an interesting QA-clause flavor on reference transforms, single data point, not promoted.
 
 ## Featured Prompt Patterns (Reusable Templates)
 
